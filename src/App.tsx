@@ -33,6 +33,11 @@ export default function App() {
   );
   const selected = result?.markets.find((m) => m.market_id === uv.market) ?? null;
 
+  // A market id from another district or a stale link would dim every zone with nothing selected; drop it.
+  useEffect(() => {
+    if (result && uv.market && !selected) setView({ market: "" });
+  }, [result, uv.market, selected, setView]);
+
   // Selecting a market opens its tab; clearing it goes back to the ranking.
   useEffect(() => {
     setTab((t) => (uv.market ? "market" : t === "market" ? "ranking" : t));
@@ -189,7 +194,8 @@ function Table({ result, view, selected, onSelect }: { result: DistrictResult; v
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     a.download = `micro-markets_${view.district}_${view.measure}_${view.age}.csv`;
     a.click();
-    URL.revokeObjectURL(a.href);
+    // Revoking in the same tick can cancel the download in Safari and Firefox.
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
 
   if (!result.markets.some((m) => !m.isRest)) return <div className="state">No markets for this district</div>;
