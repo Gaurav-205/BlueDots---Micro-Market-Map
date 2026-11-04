@@ -47,7 +47,8 @@ assigned as (
 select district, mid as market_id, round(lat::numeric,2) as cell_lat, round(lng::numeric,2) as cell_lng,
   sum((item_type='profile_1.0')::int) as seekers,
   sum((item_type='job_posting_1.0')::int) as postings,
-  sum((item_type='job_posting_1.0' and created_at >= now() - interval '180 days')::int) as postings_recent
+  sum((item_type='job_posting_1.0' and created_at >= now() - interval '180 days')::int) as postings_recent,
+  sum((item_type='job_posting_1.0' and created_at >= now() - interval '30 days')::int) as postings_30d
 from assigned
 group by 1,2,3,4
 order by 1,2,3,4;

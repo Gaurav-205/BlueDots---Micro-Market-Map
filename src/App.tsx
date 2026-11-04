@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { callLabel, computeDistrict, fmt1, fmtInt, showPileWarning } from "./lib/logic";
+import { ageLabel, ageSuffix, callLabel, computeDistrict, fmt1, fmtInt, showPileWarning } from "./lib/logic";
 import { flowCoverage } from "./lib/flows";
 import type { DistrictResult, MarketResult, View } from "./lib/logic";
 import { useData } from "./lib/useData";
@@ -52,6 +52,9 @@ export default function App() {
   const mapStatus = worst(s.markets, s.centres, s.outlines);
   const cellsOk = s.cells === "ok";
   const hasMarkets = !!result?.markets.some((m) => !m.isRest);
+  // No postings in the chosen period: every market would score 0 and read as a supply pocket, so say so instead.
+  const noDemand = !!result && result.demand === 0 && uv.age !== "all";
+  const empty = <NoDemand district={uv.district} view={view} onAll={() => setView({ age: "all" })} />;
 
   return (
     <div className="app">
@@ -70,25 +73,25 @@ export default function App() {
           <Seg label="Count" value={uv.measure} onChange={(v) => setView({ measure: v })}
             options={[["postings", "Postings"], ["openings", "Openings"]]} />
           <Seg label="Period" value={uv.age} onChange={(v) => setView({ age: v })}
-            options={[["all", "All live"], ["recent", "Last 180 days"]]} />
+            options={[["all", ageLabel("all")], ["recent", ageLabel("recent")], ["30d", ageLabel("30d")]]} />
         </nav>
       </header>
 
       {/* Overview first, then the map to explore, then details in the side panel. */}
       <section className="overview" aria-label={`${uv.district} overview`}>
         {s.markets === "error" ? <Failed /> : !result ? <Skel rows={2} /> : (
-          <Overview result={result} view={view} onSelect={(id) => setView({ market: id })} />
+          <Overview result={result} view={view} onSelect={(id) => setView({ market: id })} hideInsights={noDemand} />
         )}
       </section>
 
       <main className="body">
         <section className="mapwrap" aria-label="Micro-market map">
-          {mapStatus === "ok" && result && hasMarkets ? (
+          {noDemand ? <div className="state">{empty}</div> : mapStatus === "ok" && result && hasMarkets ? (
             <MapView data={data} result={result} view={view} selected={uv.market} pins={uv.pins && cellsOk}
               onSelect={(id) => setView({ market: id })} />
           ) : mapStatus === "loading" ? <div className="state"><span className="skel" style={{ width: 160 }} /></div>
             : mapStatus === "error" ? <Failed /> : <div className="state">No markets for this district</div>}
-          <div className="legend">
+          {!noDemand && <div className="legend">
             <div className="legend-title">Jobs per 100 seekers</div>
             <div className="legend-row"><i className="grad" /></div>
             <div className="legend-row legend-ends"><span>More seekers</span><span>More jobs</span></div>
@@ -98,7 +101,7 @@ export default function App() {
                 <span>Show seeker and job dots</span>
               </label>
             )}
-          </div>
+          </div>}
         </section>
 
         <aside className="sidebar">
@@ -110,13 +113,13 @@ export default function App() {
                 ))}
               </div></div>
               <div className="pad tabbody">
-                {tab === "market" && (
+                {noDemand && tab !== "gaps" ? empty : tab === "market" && (
                   <>
                     {selected && <button type="button" className="link" onClick={() => setView({ market: "" })}>← All markets</button>}
                     <Panel market={selected} result={result} view={view} roles={data.roles} flows={data.flows} />
                   </>
                 )}
-                {tab === "ranking" && (
+                {!noDemand && tab === "ranking" && (
                   <Table result={result} view={view} selected={uv.market} onSelect={(id) => setView({ market: id === uv.market ? "" : id })} />
                 )}
                 {tab === "gaps" && (
@@ -158,9 +161,20 @@ const Logo = () => (
 );
 
 // Key numbers for the district, then the two markets to act on first.
-function Overview({ result, view, onSelect }: { result: DistrictResult; view: View; onSelect: (id: string) => void }) {
+function NoDemand({ district, view, onAll }: { district: string; view: View; onAll: () => void }) {
+  const what = view.measure === "openings" ? "openings" : "job postings";
+  return (
+    <div className="empty">
+      <b>No new {what} in {district} in the {ageLabel(view.age).toLowerCase()}.</b>
+      <span>Every market would show 0, so there is nothing to compare for this period.</span>
+      <button type="button" className="btn" onClick={onAll}>Show all live postings</button>
+    </div>
+  );
+}
+
+function Overview({ result, view, onSelect, hideInsights }: { result: DistrictResult; view: View; onSelect: (id: string) => void; hideInsights: boolean }) {
   const unit = view.measure === "openings" ? "openings" : "postings";
-  const period = view.age === "recent" ? "Last 180 days" : "All live";
+  const period = ageLabel(view.age);
   const count = result.markets.filter((m) => !m.isRest).length;
   const { top, pocket } = result;
   const card = (m: MarketResult, kind: "hot" | "pocket", label: string, value: string) => (
@@ -191,17 +205,17 @@ function Overview({ result, view, onSelect }: { result: DistrictResult; view: Vi
           <span className="kpi-note">{period}</span>
         </div>
       </div>
-      <div className="insights">
+      {!hideInsights && <div className="insights">
         {!top && !pocket && <p className="muted" style={{ margin: 0 }}>No markets for this district.</p>}
         {top && card(top, "hot", "Most jobs per seeker", `${fmt1(top.rate)} ${unit} per 100 seekers`)}
         {pocket && card(pocket, "pocket", "Most seekers, few jobs", `${fmtInt(pocket.seekers)} seekers · ${fmtInt(pocket.demand)} ${unit}`)}
-      </div>
+      </div>}
     </div>
   );
 }
 
 function Table({ result, view, selected, onSelect }: { result: DistrictResult; view: View; selected: string; onSelect: (id: string) => void }) {
-  const demandHead = (view.measure === "openings" ? "Openings" : "Postings") + (view.age === "recent" ? " (180 d)" : "");
+  const demandHead = (view.measure === "openings" ? "Openings" : "Postings") + ageSuffix(view.age);
   const maxRate = Math.max(0, ...result.markets.filter((m) => !m.isRest).map((m) => m.rate));
   const name = (m: MarketResult) => (m.isRest ? "Rest of district" : m.market);
 

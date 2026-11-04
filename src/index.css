@@ -19,10 +19,14 @@
   --attention-soft: #fff1e3;
   --attention-text: #8a4100;
   --critical: #e41e3f;
-  /* Data scale: more seekers (attention orange) -> district rate (grey) -> more jobs (cobalt). */
-  --pocket: var(--attention);
-  --mid: var(--hairline);
-  --hot: var(--primary);
+  /* Data scale: more seekers (red) -> district rate (grey) -> more jobs (green). */
+  --pocket: #d73027;
+  --pocket-soft: #fdecea;
+  --pocket-text: #a1231b;
+  --mid: #d3d7dc;
+  --hot: #1a9850;
+  --hot-soft: #e6f4ea;
+  --hot-text: #11663a;
   --r-lg: 8px;
   --r-xl: 16px;
   --r-full: 100px;
@@ -92,8 +96,8 @@ b, strong { font-weight: 700; }
 @media (max-width: 960px) { .legend { width: 200px; bottom: 16px; padding: 12px; } .flowcap { max-width: calc(100% - 24px); top: 64px; } }
 
 .flowcap { position: absolute; top: 12px; left: 12px; right: 190px; width: max-content; max-width: calc(100% - 200px); z-index: 3; background: var(--canvas); border-radius: var(--r-full); box-shadow: var(--lift); padding: 8px 16px; font-size: 14px; letter-spacing: -0.14px; color: var(--ink); }
-.flowcap i { display: inline-block; vertical-align: middle; margin-right: 8px; width: 20px; height: 4px; border-radius: 2px; background: var(--primary-deep); position: relative; }
-.flowcap i::after { content: ""; position: absolute; right: -3px; top: -3px; border: 5px solid transparent; border-left-color: var(--primary-deep); border-right: 0; }
+.flowcap i { display: inline-block; vertical-align: middle; margin-right: 8px; width: 20px; height: 4px; border-radius: 2px; background: #334155; position: relative; }
+.flowcap i::after { content: ""; position: absolute; right: -3px; top: -3px; border: 5px solid transparent; border-left-color: #334155; border-right: 0; }
 .flowtag { position: absolute; transform: translate(-50%, -100%) translateY(-28px); background: var(--ink-deep); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0; padding: 4px 10px; border-radius: var(--r-full); white-space: nowrap; pointer-events: none; z-index: 900; }
 
 /* Market bubbles */
@@ -106,7 +110,7 @@ b, strong { font-weight: 700; }
 .mk.dim { opacity: 0.5; }
 .pin-s, .pin-p { position: absolute; width: var(--d); height: var(--d); transform: translate(-50%, -50%); pointer-events: none; }
 .pin-s { border-radius: 50%; background: rgba(10, 19, 23, 0.16); }
-.pin-p { background: rgba(0, 100, 224, 0.8); }
+.pin-p { background: rgba(26, 152, 80, 0.8); }
 .tip { position: absolute; z-index: 10; pointer-events: none; background: var(--canvas); border-radius: var(--r-xl); box-shadow: var(--lift); padding: 12px 16px; font-size: 14px; letter-spacing: -0.14px; width: 220px; line-height: 1.43; }
 .tip-name { font-weight: 700; font-size: 16px; color: var(--ink-deep); }
 .tip-call { display: flex; align-items: center; gap: 6px; color: var(--steel); margin-bottom: 6px; }
@@ -134,12 +138,15 @@ b, strong { font-weight: 700; }
 .insights { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .insight { display: grid; justify-items: start; align-content: start; gap: 2px; text-align: left; font: inherit; color: var(--ink); background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--r-xl); padding: 12px 16px; cursor: pointer; transition: border-color 150ms ease-out, box-shadow 150ms ease-out; }
 .insight:hover { border-color: var(--hairline); box-shadow: var(--lift); }
-.insight-label { font-size: 12px; font-weight: 600; line-height: 1.33; padding: 3px 10px; border-radius: var(--r-full); background: var(--primary-soft); color: var(--primary-deep); margin-bottom: 4px; }
-.insight.pocket .insight-label { background: var(--attention-soft); color: var(--attention-text); }
+.insight-label { font-size: 12px; font-weight: 600; line-height: 1.33; padding: 3px 10px; border-radius: var(--r-full); background: var(--hot-soft); color: var(--hot-text); margin-bottom: 4px; }
+.insight.pocket .insight-label { background: var(--pocket-soft); color: var(--pocket-text); }
 .insight-name { font-size: 19px; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; color: var(--ink-deep); }
 .insight-value { font-size: 13.5px; color: var(--charcoal); }
 .insight-warn { font-size: 12.5px; color: var(--attention-text); margin-top: 2px; }
 /* Keep the strip one row on laptops so the map keeps its height; drop the small notes instead. */
+.empty { display: grid; justify-items: start; gap: 6px; max-width: 420px; padding: 16px 18px; background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--r-xl); text-align: left; color: var(--charcoal); font-size: 14px; }
+.empty b { color: var(--ink-deep); font-size: 15px; }
+.empty .btn { margin-top: 4px; }
 @media (max-width: 1180px) { .kpi b { font-size: 24px; } .kpi-note, .insight-value { font-size: 12px; } .insight-name { font-size: 16px; } }
 @media (max-width: 960px) { .ov { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 960px) {
@@ -167,15 +174,13 @@ b, strong { font-weight: 700; }
 .pair div { border: 1px solid var(--hairline-soft); border-radius: var(--r-xl); padding: 12px 16px; }
 .pair span { display: block; font-size: 14px; letter-spacing: -0.14px; color: var(--steel); }
 .pair b { font-size: 36px; font-weight: 500; line-height: 1.28; letter-spacing: 0; }
-.gauge { background: var(--surface-soft); border-radius: var(--r-xl); padding: 14px 16px 10px; }
-.gauge-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; letter-spacing: -0.14px; color: var(--charcoal); }
-.gauge-head b { color: var(--ink-deep); font-size: 18px; }
-.gauge-bar { position: relative; height: 10px; margin: 10px 0 8px; border-radius: var(--r-full); background: linear-gradient(90deg, var(--pocket), var(--mid), var(--hot)); }
-.gauge-mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--ink-deep); opacity: 0.5; }
-.gauge-pt { position: absolute; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: #fff; border: 3px solid var(--ink-deep); box-shadow: var(--lift); }
-.gauge-foot { display: flex; justify-content: space-between; font-size: 12px; letter-spacing: 0; color: var(--steel); }
-.rec { background: var(--primary-soft); border-radius: var(--r-xl); padding: 14px 16px; margin: 12px 0 0; line-height: 1.5; color: var(--ink); }
-.rec b { color: var(--primary-deep); }
+.cmp { display: grid; gap: 8px; background: var(--surface-soft); border-radius: var(--r-xl); padding: 14px 16px; }
+.cmp-head { font-size: 14px; font-weight: 600; color: var(--charcoal); }
+.cmp-row { display: grid; grid-template-columns: 116px minmax(0, 1fr) 44px; align-items: center; gap: 10px; font-size: 14px; color: var(--charcoal); }
+.cmp-row b { text-align: right; color: var(--ink-deep); }
+.cmp-track { height: 10px; border-radius: var(--r-full); background: var(--canvas); overflow: hidden; }
+.cmp-track i { display: block; height: 100%; border-radius: var(--r-full); }
+.cmp-foot { font-size: 12.5px; color: var(--steel); }
 .roles h3, .apps h3 { font-size: 18px; font-weight: 700; line-height: 1.44; color: var(--ink-deep); margin: 24px 0 8px; }
 .rolechips { display: flex; flex-wrap: wrap; gap: 6px; }
 .rolechips span { background: var(--surface-soft); border-radius: var(--r-full); padding: 6px 14px; font-size: 14px; letter-spacing: -0.14px; }
@@ -206,7 +211,7 @@ tbody tr.rest .rank { visibility: hidden; }
 .rank { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: 700; letter-spacing: 0; color: #fff; flex: none; }
 .tpile { font-size: 12px; letter-spacing: 0; color: var(--attention-text); padding-left: 30px; }
 .bar { display: block; width: 56px; height: 4px; margin: 6px 0 0 auto; background: var(--surface-soft); border-radius: var(--r-full); }
-.bar i { display: block; height: 100%; background: var(--primary); border-radius: var(--r-full); }
+.bar i { display: block; height: 100%; background: var(--hot); border-radius: var(--r-full); }
 
 /* Data gaps */
 .gaps p { margin: 6px 0 20px; color: var(--charcoal); font-size: 14px; letter-spacing: -0.14px; line-height: 1.43; }

@@ -30,10 +30,10 @@ export interface Data {
 }
 
 const NUM: Record<string, string[]> = {
-  markets: ["lat", "lng", "radius_km", "seekers", "postings", "postings_recent", "openings", "openings_recent"],
+  markets: ["lat", "lng", "radius_km", "seekers", "postings", "postings_recent", "openings", "openings_recent", "postings_30d", "openings_30d"],
   roles: ["postings", "role_rank"],
   coverage: ["total_live", "usable", "outside_district", "default_point", "no_location", "usable_pct"],
-  cells: ["cell_lat", "cell_lng", "seekers", "postings", "postings_recent"],
+  cells: ["cell_lat", "cell_lng", "seekers", "postings", "postings_recent", "postings_30d"],
   flows: ["applications", "accepted", "applications_recent"],
 };
 const KEEP: Record<string, string[]> = {

@@ -13,37 +13,38 @@ import { callColour } from "./Panel";
 
 const KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.GOOGLE_MAPS_API_KEY) as string | undefined;
 
-const lo = interpolateRgb("#E8710A", "#CBD2D9");
-const hi = interpolateRgb("#CBD2D9", "#0064E0");
+// Red = more seekers than jobs, green = more jobs (ColorBrewer RdYlGn ends, the most colour-blind-safe red/green pair).
+const lo = interpolateRgb("#D73027", "#D3D7DC");
+const hi = interpolateRgb("#D3D7DC", "#1A9850");
 // Zone edge: the fill colour pulled toward ink, so each tile has a crisp edge in its own hue.
 const edge = (c: string) => interpolateRgb(c, "#0A1317")(0.3);
 export const zoneColour = (m: MarketResult) =>
   m.call === "Thin data" ? "#E4E8EC" : ((t) => (t < 0.5 ? lo(t * 2) : hi((t - 0.5) * 2)))(zoneT(m.index));
 
-// Quiet grey basemap so the zones carry the colour, but with roads and town names so people can find their way.
+// Quiet light basemap so the zones carry the colour, but with roads and town names so people can find their way.
 // Labels are English only (language="en" on APIProvider) to avoid the doubled Hindi/English names.
 // Works only without a map ID, so markers are drawn in an OverlayView.
 const STYLE: google.maps.MapTypeStyle[] = [
-  { elementType: "geometry", stylers: [{ color: "#f2f3f5" }] },
+  // Warm paper ground so red and green zones read clearly; roads in soft sand, water in pale blue.
+  { elementType: "geometry", stylers: [{ color: "#f6f4ef" }] },
   { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#4a5563" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }, { weight: 3 }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#57534e" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#fbfaf7" }, { weight: 3 }] },
   { featureType: "poi", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
   { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
-  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#2a3440" }] },
-  // Roads visible but quiet: grey lines on the light ground, highways a touch stronger.
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#c9d0d8" }] },
-  { featureType: "road.local", elementType: "geometry", stylers: [{ color: "#e2e6ea" }] },
+  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#292524" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#e2dccf" }] },
+  { featureType: "road.local", elementType: "geometry", stylers: [{ color: "#ece7dd" }] },
   { featureType: "road.arterial", elementType: "labels", stylers: [{ visibility: "off" }] },
   { featureType: "road.local", elementType: "labels", stylers: [{ visibility: "off" }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#aeb7c2" }] },
-  { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#6b7480" }] },
-  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#e9eee8" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9dcea" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#d3c7b0" }] },
+  { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#78716c" }] },
+  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#eef0e5" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#cfe1ec" }] },
 ];
 
-const FLOW = "#0143B5";
+const FLOW = "#334155";
 
 type Geom = Feature<Polygon | MultiPolygon>;
 const toPaths = (g: Geom) =>
@@ -232,7 +233,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
 
   const markets = result.markets.filter((m) => !m.isRest && m.lat != null);
   const cells = pins && data.cells ? data.cells.filter((c) => c.district === view.district) : [];
-  const pinField = view.age === "recent" ? "postings_recent" : "postings";
+  const pinField = view.age === "recent" ? "postings_recent" : view.age === "30d" ? "postings_30d" : "postings";
   const peakS = Math.max(1, ...cells.map((c) => c.seekers));
   const peakP = Math.max(1, ...cells.map((c) => c[pinField]));
   const peakSeekers = Math.max(1, ...markets.map((m) => m.seekers));

@@ -14,7 +14,7 @@ function read(): UrlView {
   return {
     district: q.get("district") === "Hubli-Dharwad" ? "Hubli-Dharwad" : "Ghaziabad",
     measure: q.get("measure") === "openings" ? "openings" : "postings",
-    age: q.get("age") === "recent" ? "recent" : "all",
+    age: q.get("age") === "recent" ? "recent" : q.get("age") === "30d" ? "30d" : "all",
     market: q.get("market") ?? "",
     // Pins are off by default: hundreds of dots cluttered the first view.
     pins: q.get("pins") === "1",

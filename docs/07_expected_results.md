@@ -2,6 +2,8 @@
 
 Made by running `06_logic.ts` on the snapshot in `data/` (pulled 2 Nov 2026). If you refresh the data, these numbers will change; re-run the same logic to get new ones.
 
+Corrected 2026-11-04: the two "Openings, Last 180 days" sections originally showed 0 openings everywhere. markets.csv had Windows line endings, so the last column (openings_recent) was read as missing. Those two sections were regenerated with the same logic on the same snapshot (values confirmed against the database); the other six are unchanged.
+
 How to use: after each Lovable prompt, set the controls to each combination below and compare the takeaway and the ranked table. Any mismatch is a bug.
 
 Pile warning (needs cells.csv from 2 Nov 2026). These markets have 40% or more of their seekers on one cell, so they should show the warning:
@@ -82,22 +84,22 @@ Takeaway: "Raj Nagar Extension has the most openings per seeker: 340.5 per 100 s
 
 ### Ghaziabad, Openings, Last 180 days
 
-District rate: **0.0** per 100 seekers (0 openings / 8,096 seekers). Postings from the last 180 days: 30.5%.
+District rate: **7.3** per 100 seekers (592 openings / 8,096 seekers). Postings from the last 180 days: 30.5%.
 
-Takeaway: "Muradnagar has the most openings from the last 180 days per seeker: 0.0 per 100 seekers, against 0.0 across the district. The biggest supply pocket is Muradnagar, with 1,425 seekers and only 0 openings from the last 180 days."
+Takeaway: "Indirapuram and Vaishali has the most openings from the last 180 days per seeker: 49.2 per 100 seekers, against 7.3 across the district. The biggest supply pocket is Muradnagar, with 1,425 seekers and only 27 openings from the last 180 days."
 
 | Market | Seekers | Demand | Per 100 seekers | Times district rate | Call |
 |---|---:|---:|---:|---:|---|
-| Muradnagar | 1,425 | 0 | 0.0 | 0.0 | Supply pocket |
-| Ghaziabad City | 1,268 | 0 | 0.0 | 0.0 | Supply pocket |
+| Indirapuram and Vaishali | 199 | 98 | 49.2 | 6.7 | Demand hotspot |
+| Sahibabad Industrial | 644 | 134 | 20.8 | 2.9 | Demand hotspot |
+| Raj Nagar Extension | 378 | 74 | 19.6 | 2.7 | Demand hotspot |
+| Ghaziabad City | 1,268 | 158 | 12.5 | 1.7 | Near the district rate |
+| Dasna and Masuri | 452 | 41 | 9.1 | 1.2 | Near the district rate |
+| Meerut Road | 754 | 31 | 4.1 | 0.6 | Near the district rate |
+| Vijay Nagar and NH-9 | 556 | 13 | 2.3 | 0.3 | Supply pocket |
+| Muradnagar | 1,425 | 27 | 1.9 | 0.3 | Supply pocket |
+| Loni and Tronica City | 874 | 16 | 1.8 | 0.3 | Supply pocket |
 | Modinagar | 991 | 0 | 0.0 | 0.0 | Supply pocket |
-| Loni and Tronica City | 874 | 0 | 0.0 | 0.0 | Supply pocket |
-| Meerut Road | 754 | 0 | 0.0 | 0.0 | Supply pocket |
-| Sahibabad Industrial | 644 | 0 | 0.0 | 0.0 | Supply pocket |
-| Vijay Nagar and NH-9 | 556 | 0 | 0.0 | 0.0 | Supply pocket |
-| Dasna and Masuri | 452 | 0 | 0.0 | 0.0 | Supply pocket |
-| Raj Nagar Extension | 378 | 0 | 0.0 | 0.0 | Supply pocket |
-| Indirapuram and Vaishali | 199 | 0 | 0.0 | 0.0 | Supply pocket |
 | Rest of district | 555 | 0 | 0.0 | 0.0 | Rest of district |
 
 ### Hubli-Dharwad, Job postings, All live
@@ -162,20 +164,20 @@ Takeaway: "Belur and Mummigatti has the most openings per seeker: 731.8 per 100 
 
 ### Hubli-Dharwad, Openings, Last 180 days
 
-District rate: **0.0** per 100 seekers (0 openings / 6,520 seekers). Postings from the last 180 days: 7.9%.
+District rate: **7.2** per 100 seekers (467 openings / 6,520 seekers). Postings from the last 180 days: 7.9%.
 
-Takeaway: "Hubballi City has the most openings from the last 180 days per seeker: 0.0 per 100 seekers, against 0.0 across the district. The biggest supply pocket is Hubballi City, with 2,710 seekers and only 0 openings from the last 180 days."
+Takeaway: "Gokul Road and Airport has the most openings from the last 180 days per seeker: 133.3 per 100 seekers, against 7.2 across the district. The biggest supply pocket is Kalghatgi, with 417 seekers and only 0 openings from the last 180 days."
 
 | Market | Seekers | Demand | Per 100 seekers | Times district rate | Call |
 |---|---:|---:|---:|---:|---|
-| Hubballi City | 2,710 | 0 | 0.0 | 0.0 | Supply pocket |
-| Dharwad City | 2,038 | 0 | 0.0 | 0.0 | Supply pocket |
+| Gokul Road and Airport | 60 | 80 | 133.3 | 18.5 | Demand hotspot |
+| Belur and Mummigatti | 110 | 24 | 21.8 | 3.0 | Demand hotspot |
+| Navanagar to Rayapur | 79 | 11 | 13.9 | 1.9 | Near the district rate |
+| Hubballi City | 2,710 | 218 | 8.0 | 1.1 | Near the district rate |
+| Dharwad City | 2,038 | 134 | 6.6 | 0.9 | Near the district rate |
 | Kalghatgi | 417 | 0 | 0.0 | 0.0 | Supply pocket |
 | Navalgund | 334 | 0 | 0.0 | 0.0 | Supply pocket |
 | Kundgol | 284 | 0 | 0.0 | 0.0 | Supply pocket |
-| Belur and Mummigatti | 110 | 0 | 0.0 | 0.0 | Supply pocket |
-| Navanagar to Rayapur | 79 | 0 | 0.0 | 0.0 | Supply pocket |
 | Annigeri | 79 | 0 | 0.0 | 0.0 | Supply pocket |
 | Alnavar | 67 | 0 | 0.0 | 0.0 | Supply pocket |
-| Gokul Road and Airport | 60 | 0 | 0.0 | 0.0 | Supply pocket |
 | Rest of district | 342 | 0 | 0.0 | 0.0 | Rest of district |

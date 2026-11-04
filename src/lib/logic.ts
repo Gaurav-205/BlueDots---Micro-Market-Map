@@ -3,8 +3,8 @@
 
 export type District = "Ghaziabad" | "Hubli-Dharwad";
 export type Measure = "postings" | "openings";
-export type Age = "all" | "recent";
-export type DemandField = "postings" | "postings_recent" | "openings" | "openings_recent";
+export type Age = "all" | "recent" | "30d";
+export type DemandField = "postings" | "postings_recent" | "postings_30d" | "openings" | "openings_recent" | "openings_30d";
 export type Call =
   | "Demand hotspot"
   | "Supply pocket"
@@ -25,6 +25,8 @@ export interface MarketRow {
   postings_recent: number;
   openings: number;
   openings_recent: number;
+  postings_30d: number;
+  openings_30d: number;
 }
 
 export interface CellRow {
@@ -35,6 +37,7 @@ export interface CellRow {
   seekers: number;
   postings: number;
   postings_recent: number;
+  postings_30d: number;
 }
 
 export interface RoleRow {
@@ -91,7 +94,10 @@ export const OPENINGS_CAP = 50; // already applied in SQL; listed so the method 
 export const round1 = (x: number) => Math.round(x * 10) / 10;
 
 export const demandField = (measure: Measure, age: Age): DemandField =>
-  (age === "recent" ? `${measure}_recent` : measure) as DemandField;
+  (age === "all" ? measure : age === "recent" ? `${measure}_recent` : `${measure}_30d`) as DemandField;
+
+export const ageLabel = (age: Age) => (age === "recent" ? "Last 180 days" : age === "30d" ? "Last 30 days" : "All live");
+export const ageSuffix = (age: Age) => (age === "recent" ? " (180 d)" : age === "30d" ? " (30 d)" : "");
 
 export const isRest = (id: string) => id.endsWith("REST");
 
@@ -180,7 +186,7 @@ export const zoneT = (index: number) =>
 
 export const unitWord = (view: View) =>
   (view.measure === "openings" ? "openings" : "job postings") +
-  (view.age === "recent" ? " from the last 180 days" : "");
+  (view.age === "recent" ? " from the last 180 days" : view.age === "30d" ? " from the last 30 days" : "");
 
 export const fmtInt = (n: number) => n.toLocaleString("en-IN");
 export const fmt1 = (n: number) =>

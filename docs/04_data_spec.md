@@ -30,6 +30,8 @@ The 4 queries in `sql/` do all of this and return only aggregated counts. Snapsh
 | postings_recent | integer | Of those, posted in the last 180 days |
 | openings | integer | Sum of openings, each posting capped at 50 |
 | openings_recent | integer | Openings on postings from the last 180 days |
+| postings_30d | integer | Of those, posted in the last 30 days (added 2026-11-04) |
+| openings_30d | integer | Openings on postings from the last 30 days (added 2026-11-04) |
 
 A fresh export from `sql/markets.sql` has extra columns (postings_per_100 and so on). The app must ignore them and work the rates out itself, as below.
 
@@ -68,6 +70,7 @@ Some markets have no rows; show "None of the postings here name a role."
 | seekers | integer | |
 | postings | integer | |
 | postings_recent | integer | |
+| postings_30d | integer | Postings from the last 30 days (added 2026-11-04) |
 
 A cell can appear twice if it is split between two markets. That is fine.
 
@@ -96,10 +99,12 @@ Two polygon features with `properties.district` = "Ghaziabad" or "Hubli-Dharwad"
 
 Let `v` be the current demand field:
 
-| Count demand as | All live | Last 180 days |
-|---|---|---|
-| Job postings | `postings` | `postings_recent` |
-| Openings | `openings` | `openings_recent` |
+| Count demand as | All live | Last 180 days | Last 30 days |
+|---|---|---|---|
+| Job postings | `postings` | `postings_recent` | `postings_30d` |
+| Openings | `openings` | `openings_recent` | `openings_30d` |
+
+If the district has no demand in the chosen period, the app shows a "no new postings" message instead of rates and calls.
 
 Then:
 

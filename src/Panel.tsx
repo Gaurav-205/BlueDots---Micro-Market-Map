@@ -1,19 +1,11 @@
 import type { ReactNode } from "react";
-import { callLabel, fmt1, fmtInt, showPileWarning, zoneT } from "./lib/logic";
+import { ageSuffix, callLabel, fmt1, fmtInt, showPileWarning } from "./lib/logic";
 import type { Call, DistrictResult, MarketResult, RoleRow, View } from "./lib/logic";
 import { flowsFor } from "./lib/flows";
 import type { FlowRow, MarketFlows } from "./lib/flows";
 
 export const callColour = (c: Call) =>
-  c === "Demand hotspot" ? "#0064E0" : c === "Supply pocket" ? "#E8710A" : "#8595A4";
-
-const REC: Record<Call, string> = {
-  "Demand hotspot": "treat this as a place to send people. Point KKB campaigns from nearby supply pockets at these employers first, and check the postings are still open before we push them.",
-  "Supply pocket": "bring employers here. Ask DKB and the local associations for jobs in or near this market, or line these seekers up for the nearest hotspot if travel works for them.",
-  "Near district rate": "keep both sides growing together here. It is not the first place to act.",
-  "Thin data": "too few seekers here to judge the rate. Treat it as thin and don't act on this number alone.",
-  "Not a market": "these records sit too far from any market centre to group. If many of them cluster somewhere, that place may deserve its own market.",
-};
+  c === "Demand hotspot" ? "#1A9850" : c === "Supply pocket" ? "#D73027" : "#8595A4";
 
 interface Props {
   market: MarketResult | null;
@@ -25,7 +17,7 @@ interface Props {
 
 export default function Panel({ market: m, result, view, roles, flows }: Props) {
   if (!m) {
-    return <p className="muted" style={{ margin: 0 }}>Pick a zone on the map or a row in the list to see that market's numbers and what I'd propose for it.</p>;
+    return <p className="muted" style={{ margin: 0 }}>Pick a zone on the map or a row in the list to see that market's numbers.</p>;
   }
   const myRoles = (roles ?? []).filter((r) => r.market_id === m.market_id).sort((a, b) => a.role_rank - b.role_rank);
   return (
@@ -37,10 +29,9 @@ export default function Panel({ market: m, result, view, roles, flows }: Props) 
       {m.localities && <div className="small muted">{m.localities}</div>}
       <div className="pair">
         <div><span>Seekers</span><b>{fmtInt(m.seekers)}</b></div>
-        <div><span>{view.measure === "openings" ? "Openings" : "Postings"}{view.age === "recent" ? " (180 d)" : ""}</span><b>{fmtInt(m.demand)}</b></div>
+        <div><span>{view.measure === "openings" ? "Openings" : "Postings"}{ageSuffix(view.age)}</span><b>{fmtInt(m.demand)}</b></div>
       </div>
-      <Gauge m={m} district={result.rate} />
-      <div className="rec"><b>Next step:</b> {REC[m.call]}</div>
+      <Compare m={m} district={result.rate} />
       {showPileWarning(m) && (
         <p className="caveat">
           ⚠ {fmt1(m.pile!)}% of these seekers sit on one 1 km spot, likely a signup camp or college. Read the seeker count with care.
@@ -98,16 +89,22 @@ function Side({ f, name, lead, none }: { f: MarketFlows; name: Map<string, strin
   );
 }
 
-// Where this market's rate sits against the district, on the same log scale as the zone colours.
-function Gauge({ m, district }: { m: MarketResult; district: number }) {
+// This market's rate next to the district average, as two bars on one scale.
+function Compare({ m, district }: { m: MarketResult; district: number }) {
+  const max = Math.max(m.rate, district, 0.1);
+  const row = (label: string, v: number, colour: string) => (
+    <div className="cmp-row">
+      <span>{label}</span>
+      <span className="cmp-track"><i style={{ width: `${(100 * v) / max}%`, background: colour }} /></span>
+      <b>{fmt1(v)}</b>
+    </div>
+  );
   return (
-    <div className="gauge">
-      <div className="gauge-head"><span>Jobs per 100 seekers</span><b>{fmt1(m.rate)}</b></div>
-      <div className="gauge-bar">
-        <i className="gauge-mid" title={`District ${fmt1(district)}`} />
-        <i className="gauge-pt" style={{ left: `${100 * zoneT(m.index)}%` }} />
-      </div>
-      <div className="gauge-foot"><span>More seekers</span><span>District {fmt1(district)} · {fmt1(m.index)}×</span><span>More jobs</span></div>
+    <div className="cmp">
+      <div className="cmp-head">Jobs per 100 seekers</div>
+      {row("This market", m.rate, callColour(m.call))}
+      {row("District average", district, "#8595A4")}
+      <div className="cmp-foot">{fmt1(m.index)}× the district average</div>
     </div>
   );
 }

@@ -6,9 +6,9 @@ import type { Age, District, MarketRow, Measure } from "../src/lib/logic.ts";
 import { flowCoverage, flowsFor } from "../src/lib/flows.ts";
 import type { FlowRow } from "../src/lib/flows.ts";
 
-const csv = readFileSync(new URL("../public/data/markets.csv", import.meta.url), "utf8").trim().split("\n");
+const csv = readFileSync(new URL("../public/data/markets.csv", import.meta.url), "utf8").trim().split(/\r?\n/); // CRLF exports once hid the last column
 const head = csv[0].split(",");
-const num = new Set(["lat", "lng", "radius_km", "seekers", "postings", "postings_recent", "openings", "openings_recent"]);
+const num = new Set(["lat", "lng", "radius_km", "seekers", "postings", "postings_recent", "openings", "openings_recent", "postings_30d", "openings_30d"]);
 const markets = csv.slice(1).map((line) => {
   const cells = line.match(/("[^"]*"|[^,]*)(,|$)/g)!.map((c) => c.replace(/,$/, "").replace(/^"|"$/g, ""));
   return Object.fromEntries(head.map((h, i) => [h, num.has(h) ? (cells[i] === "" ? null : Number(cells[i])) : cells[i]]));
@@ -43,8 +43,12 @@ for (const s of sections) {
     eq(`${title} row ${i + 1}`, got, want);
   });
 }
+// Last 30 days has no expected-results file; check it is a subset of the last 180 days in every market.
+for (const m of markets) for (const k of ["postings", "openings"] as const) {
+  if (!(m[`${k}_30d`] <= m[`${k}_recent`])) eq(`${m.market_id} ${k}_30d <= ${k}_recent`, String(m[`${k}_30d`]), `<= ${m[`${k}_recent`]}`);
+}
 // Flows: every application lands in exactly one bucket on each side.
-const fl = readFileSync(new URL("../public/data/flows.csv", import.meta.url), "utf8").trim().split("\n").slice(1).map((l) => {
+const fl = readFileSync(new URL("../public/data/flows.csv", import.meta.url), "utf8").trim().split(/\r?\n/).slice(1).map((l) => {
   const [district, from_market, to_market, applications, accepted, applications_recent] = l.split(",");
   return { district, from_market, to_market, applications: +applications, accepted: +accepted, applications_recent: +applications_recent } as FlowRow;
 });
