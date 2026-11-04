@@ -73,7 +73,7 @@ export default function App() {
           <Seg label="Count" value={uv.measure} onChange={(v) => setView({ measure: v })}
             options={[["postings", "Postings"], ["openings", "Openings"]]} />
           <Seg label="Period" value={uv.age} onChange={(v) => setView({ age: v })}
-            options={[["all", ageLabel("all")], ["recent", ageLabel("recent")], ["30d", ageLabel("30d")]]} />
+            options={[["all", ageLabel("all")], ["30d", ageLabel("30d")]]} />
         </nav>
       </header>
 
@@ -285,7 +285,7 @@ function Gaps({ data, result, district }: { data: Data; result: DistrictResult; 
       <Meter label="Postings placed on map" pct={jobs.usable_pct} />
       <p>Jobs: <b>{fmtInt(jobs.usable)}</b> of <b>{fmtInt(jobs.total_live)}</b> live postings (<b>{fmt1(jobs.usable_pct)}%</b>) can be placed on the map. <b>{fmtInt(jobs.no_location)}</b> have no location at all, so real demand is higher than shown.</p>
       <Meter label="Mapped postings from last 180 days" pct={result.recentShare} />
-      <p>Freshness: only <b>{fmt1(result.recentShare)}%</b> of the postings on this map were posted in the last 180 days. Switch to "Last 180 days" to see the picture without old postings that are still marked live.</p>
+      <p>Freshness: only <b>{fmt1(result.recentShare)}%</b> of the postings on this map were posted in the last 180 days. Switch to "Last 30 days" to see only fresh postings.</p>
       {data.flows && (() => {
         const f = flowCoverage(data.flows, district);
         return (

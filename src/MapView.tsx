@@ -173,11 +173,11 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
       .map((poly) => poly[0].map(([lng, lat]) => ({ lat, lng })))
       .map((r) => (ccw(r) ? r : r.reverse()));
     shapes.push(new google.maps.Polygon({
-      map, paths: [frame, ...holes], clickable: false, strokeOpacity: 0, fillColor: "#0A1317", fillOpacity: 0.06, zIndex: 0,
+      map, paths: [frame, ...holes], clickable: false, strokeOpacity: 0, fillColor: "#FFFFFF", fillOpacity: 0.55, zIndex: 0,
     }));
     shapes.push(new google.maps.Polygon({
       map, paths: toPaths(outline), clickable: false,
-      strokeColor: "#0A1317", strokeOpacity: 0.6, strokeWeight: 1.5, fillOpacity: 0, zIndex: 0,
+      strokeColor: "#0A1317", strokeOpacity: 0.85, strokeWeight: 2, fillColor: "#0A1317", fillOpacity: 0.07, zIndex: 0,
     }));
     const box = map.getDiv();
     for (const z of zones) {

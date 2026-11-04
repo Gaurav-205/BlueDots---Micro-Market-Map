@@ -14,7 +14,8 @@ function read(): UrlView {
   return {
     district: q.get("district") === "Hubli-Dharwad" ? "Hubli-Dharwad" : "Ghaziabad",
     measure: q.get("measure") === "openings" ? "openings" : "postings",
-    age: q.get("age") === "recent" ? "recent" : q.get("age") === "30d" ? "30d" : "all",
+    // The UI offers All live and Last 30 days; logic.ts still supports "recent" (180 days) for the checks.
+    age: q.get("age") === "30d" ? "30d" : "all",
     market: q.get("market") ?? "",
     // Pins are off by default: hundreds of dots cluttered the first view.
     pins: q.get("pins") === "1",
