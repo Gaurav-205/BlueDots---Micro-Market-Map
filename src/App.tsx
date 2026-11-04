@@ -1,17 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { ageLabel, ageSuffix, callLabel, computeDistrict, fmt1, fmtInt, showPileWarning } from "./lib/logic";
 import { flowCoverage } from "./lib/flows";
+import { familyMarkets, familyTotals, NO_ROLE } from "./lib/families";
 import type { DistrictResult, MarketResult, View } from "./lib/logic";
 import { useData } from "./lib/useData";
 import type { Data, Status } from "./lib/useData";
 import { useView } from "./lib/useView";
 import MapView from "./MapView";
 import Panel, { callColour } from "./Panel";
+import Skills from "./Skills";
 
 const METHOD =
   "How the markets are drawn: each seeker or posting goes to its nearest market centre if it is within 6 km (Ghaziabad) or 10 km (Hubli-Dharwad); anything further counts as rest of district. Seeker pins may show where someone was signed up (a college or camp) rather than where they live, and job pins may show the office that entered the posting. Openings are capped at 50 a posting because a few postings list hundreds. District outlines are 2011 census boundaries, simplified. Market centres are my placement of well-known localities and should be checked on a map before this goes outside the team. All counts are aggregated; no personal details are shown.";
 
-type Tab = "market" | "ranking" | "gaps";
+type Tab = "market" | "ranking" | "skills" | "gaps";
 
 const Failed = () => <div className="state"><span className="dot" />Failed to load</div>;
 const Skel = ({ rows = 3 }: { rows?: number }) => (
@@ -25,11 +27,24 @@ export default function App() {
   const view: View = { district: uv.district, measure: uv.measure, age: uv.age };
   const [tab, setTab] = useState<Tab>(uv.market ? "market" : "ranking");
 
-  const result = useMemo(
+  const base = useMemo(
     () => (data.markets ? computeDistrict(data.markets, data.cells, view) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data.markets, data.cells, uv.district, uv.measure, uv.age],
   );
+  // Role filter: same maths on that family's counts. Unknown roles (stale links) fall back to all roles.
+  const role = data.families?.some((f) => f.district === uv.district && f.family === uv.role) ? uv.role : "";
+  const result = useMemo(
+    () => (role && data.markets && data.families ? computeDistrict(familyMarkets(data.markets, data.families, role), null, view) : base),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [base, role, data.markets, data.families, uv.district, uv.measure, uv.age],
+  );
+  const roleOptions = useMemo(() => {
+    if (!data.families) return [];
+    const t = familyTotals(data.families, view).sort((a, b) => b.seekers + b.demand - (a.seekers + a.demand));
+    return [...t.filter((x) => !NO_ROLE.has(x.family)), ...t.filter((x) => NO_ROLE.has(x.family))].map((x) => x.family);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.families, uv.district, uv.measure, uv.age]);
   const selected = result?.markets.find((m) => m.market_id === uv.market) ?? null;
 
   // A market id from another district or a stale link would dim every zone with nothing selected; drop it.
@@ -53,8 +68,8 @@ export default function App() {
   const cellsOk = s.cells === "ok";
   const hasMarkets = !!result?.markets.some((m) => !m.isRest);
   // No postings in the chosen period: every market would score 0 and read as a supply pocket, so say so instead.
-  const noDemand = !!result && result.demand === 0 && uv.age !== "all";
-  const empty = <NoDemand district={uv.district} view={view} onAll={() => setView({ age: "all" })} />;
+  const noDemand = !!result && result.demand === 0 && (uv.age !== "all" || !!role);
+  const empty = <NoDemand district={uv.district} view={view} role={role} onAll={() => setView(role ? { role: "" } : { age: "all" })} />;
 
   return (
     <div className="app">
@@ -74,28 +89,43 @@ export default function App() {
             options={[["postings", "Postings"], ["openings", "Openings"]]} />
           <Seg label="Period" value={uv.age} onChange={(v) => setView({ age: v })}
             options={[["all", ageLabel("all")], ["30d", ageLabel("30d")]]} />
+          {roleOptions.length > 0 && (
+            <label className="ctl">
+              <span className="ctl-label">Role</span>
+              <select className="select" value={role} onChange={(e) => setView({ role: e.target.value })}>
+                <option value="">All roles</option>
+                {roleOptions.map((f) => <option key={f} value={f}>{NO_ROLE.has(f) ? `(${f})` : f}</option>)}
+              </select>
+            </label>
+          )}
         </nav>
       </header>
 
       {/* Overview first, then the map to explore, then details in the side panel. */}
       <section className="overview" aria-label={`${uv.district} overview`}>
         {s.markets === "error" ? <Failed /> : !result ? <Skel rows={2} /> : (
-          <Overview result={result} view={view} onSelect={(id) => setView({ market: id })} hideInsights={noDemand} />
+          <Overview result={result} view={view} role={role} onSelect={(id) => setView({ market: id })} hideInsights={noDemand} />
         )}
       </section>
 
       <main className="body">
         <section className="mapwrap" aria-label="Micro-market map">
           {noDemand ? <div className="state">{empty}</div> : mapStatus === "ok" && result && hasMarkets ? (
-            <MapView data={data} result={result} view={view} selected={uv.market} pins={uv.pins && cellsOk}
+            <MapView data={data} result={result} view={view} selected={uv.market} pins={uv.pins && cellsOk && !role}
               onSelect={(id) => setView({ market: id })} />
           ) : mapStatus === "loading" ? <div className="state"><span className="skel" style={{ width: 160 }} /></div>
             : mapStatus === "error" ? <Failed /> : <div className="state">No markets for this district</div>}
           {!noDemand && <div className="legend">
             <div className="legend-title">Jobs per 100 seekers</div>
+            {role && (
+              <div className="legend-row rolechip">
+                <span>Only <b>{role}</b></span>
+                <button type="button" className="link" onClick={() => setView({ role: "" })}>All roles</button>
+              </div>
+            )}
             <div className="legend-row"><i className="grad" /></div>
             <div className="legend-row legend-ends"><span>More seekers</span><span>More jobs</span></div>
-            {cellsOk && (
+            {cellsOk && !role && (
               <label className="legend-row check">
                 <input type="checkbox" checked={uv.pins} onChange={(e) => setView({ pins: e.target.checked })} />
                 <span>Show seeker and job dots</span>
@@ -108,15 +138,21 @@ export default function App() {
           {s.markets === "error" ? <Failed /> : !result ? <div className="pad"><Skel rows={5} /></div> : (
             <>
               <div className="tabs" role="tablist"><div className="seg">
-                {([["ranking", "Ranking"], ["market", selected ? selected.market : "Market"], ["gaps", "Data quality"]] as [Tab, string][]).map(([t, label]) => (
+                {([["ranking", "Ranking"], ...(data.families ? [["skills", "Skills"]] : []), ["market", selected ? selected.market : "Market"], ["gaps", "Data quality"]] as [Tab, string][]).map(([t, label]) => (
                   <button key={t} role="tab" type="button" aria-selected={tab === t} onClick={() => setTab(t)}>{label}</button>
                 ))}
               </div></div>
               <div className="pad tabbody">
-                {noDemand && tab !== "gaps" ? empty : tab === "market" && (
+                {tab === "skills" && data.families && base && (
+                  <Skills families={data.families} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} />
+                )}
+                {noDemand && tab !== "gaps" && tab !== "skills" ? empty : tab === "market" && (
                   <>
                     {selected && <button type="button" className="link" onClick={() => setView({ market: "" })}>← All markets</button>}
-                    <Panel market={selected} result={result} view={view} roles={data.roles} flows={data.flows} />
+                    <Panel market={selected} result={result} view={view} roles={data.roles} flows={data.flows}
+                      skills={data.families && base && selected && !selected.isRest
+                        ? <Skills families={data.families} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} marketId={selected.market_id} limit={6} />
+                        : null} />
                   </>
                 )}
                 {!noDemand && tab === "ranking" && (
@@ -161,18 +197,19 @@ const Logo = () => (
 );
 
 // Key numbers for the district, then the two markets to act on first.
-function NoDemand({ district, view, onAll }: { district: string; view: View; onAll: () => void }) {
+function NoDemand({ district, view, role, onAll }: { district: string; view: View; role: string; onAll: () => void }) {
   const what = view.measure === "openings" ? "openings" : "job postings";
+  const when = view.age === "all" ? "" : ` in the ${ageLabel(view.age).toLowerCase()}`;
   return (
     <div className="empty">
-      <b>No new {what} in {district} in the {ageLabel(view.age).toLowerCase()}.</b>
-      <span>Every market would show 0, so there is nothing to compare for this period.</span>
-      <button type="button" className="btn" onClick={onAll}>Show all live postings</button>
+      <b>{role ? `No ${what} for ${role} in ${district}${when}.` : `No new ${what} in ${district}${when}.`}</b>
+      <span>Every market would show 0, so there is nothing to compare.</span>
+      <button type="button" className="btn" onClick={onAll}>{role ? "Show all roles" : "Show all live postings"}</button>
     </div>
   );
 }
 
-function Overview({ result, view, onSelect, hideInsights }: { result: DistrictResult; view: View; onSelect: (id: string) => void; hideInsights: boolean }) {
+function Overview({ result, view, role, onSelect, hideInsights }: { result: DistrictResult; view: View; role: string; onSelect: (id: string) => void; hideInsights: boolean }) {
   const unit = view.measure === "openings" ? "openings" : "postings";
   const period = ageLabel(view.age);
   const count = result.markets.filter((m) => !m.isRest).length;
@@ -190,14 +227,14 @@ function Overview({ result, view, onSelect, hideInsights }: { result: DistrictRe
     <div className="ov">
       <div className="kpis">
         <div className="kpi hero">
-          <span className="kpi-label">District average</span>
+          <span className="kpi-label">{role ? `${role}, district` : "District average"}</span>
           <b>{fmt1(result.rate)}</b>
           <span className="kpi-note">{unit} per 100 seekers</span>
         </div>
         <div className="kpi">
           <span className="kpi-label">Seekers</span>
           <b>{fmtInt(result.seekers)}</b>
-          <span className="kpi-note">across {count} micro-markets</span>
+          <span className="kpi-note">{role ? "in this kind of work" : `across ${count} micro-markets`}</span>
         </div>
         <div className="kpi">
           <span className="kpi-label">{unit === "openings" ? "Openings" : "Job postings"}</span>

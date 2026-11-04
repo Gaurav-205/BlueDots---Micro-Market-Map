@@ -62,5 +62,20 @@ for (const d of ["Ghaziabad", "Hubli-Dharwad"]) {
   }
   eq(`${d} flow total`, String(outSum), String(flowCoverage(fl, d).total));
 }
+// Families: each market's families add up to its markets.csv row. families.csv is a later snapshot,
+// so allow a little drift from new sign-ups (1% or 5 items, whichever is larger).
+const famLines = readFileSync(new URL("../public/data/families.csv", import.meta.url), "utf8").trim().split(/\r?\n/);
+const famHead = famLines[0].split(",");
+const famSum = new Map<string, Record<string, number>>();
+for (const l of famLines.slice(1)) {
+  const c = l.match(/("[^"]*"|[^,]*)(,|$)/g)!.map((x) => x.replace(/,$/, "").replace(/^"|"$/g, ""));
+  const acc = famSum.get(c[1]) ?? {};
+  famHead.slice(3).forEach((h, i) => (acc[h] = (acc[h] ?? 0) + Number(c[i + 3])));
+  famSum.set(c[1], acc);
+}
+for (const m of markets) for (const k of ["seekers", "postings", "openings", "postings_30d", "openings_30d"] as const) {
+  const got = famSum.get(m.market_id)?.[k] ?? 0, want = m[k];
+  if (Math.abs(got - want) > Math.max(5, want / 100)) eq(`${m.market_id} families ${k}`, String(got), `about ${want}`);
+}
 console.log(fails ? `${fails} mismatches` : `All ${sections.length} views match`);
 process.exit(fails ? 1 : 0);

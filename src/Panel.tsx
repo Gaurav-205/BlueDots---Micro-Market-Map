@@ -13,9 +13,10 @@ interface Props {
   view: View;
   roles: RoleRow[] | null;
   flows: FlowRow[] | null;
+  skills: ReactNode; // role-family table for this market, built by App
 }
 
-export default function Panel({ market: m, result, view, roles, flows }: Props) {
+export default function Panel({ market: m, result, view, roles, flows, skills }: Props) {
   if (!m) {
     return <p className="muted" style={{ margin: 0 }}>Pick a zone on the map or a row in the list to see that market's numbers.</p>;
   }
@@ -36,6 +37,12 @@ export default function Panel({ market: m, result, view, roles, flows }: Props) 
         <p className="caveat">
           ⚠ {fmt1(m.pile!)}% of these seekers sit on one 1 km spot, likely a signup camp or college. Read the seeker count with care.
         </p>
+      )}
+      {skills && (
+        <div className="roles">
+          <h3>Kinds of work here</h3>
+          {skills}
+        </div>
       )}
       {roles && (
         <div className="roles">

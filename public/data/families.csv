@@ -1,0 +1,402 @@
+district,market_id,family,seekers,postings,postings_recent,openings,openings_recent,postings_30d,openings_30d
+Ghaziabad,GZB-01,Accounts & finance,25,6,0,7,0,0,0
+Ghaziabad,GZB-01,Construction & civil,13,0,0,0,0,0,0
+Ghaziabad,GZB-01,Customer service,9,3,1,31,20,0,0
+Ghaziabad,GZB-01,Electrical,21,10,4,77,8,1,1
+Ghaziabad,GZB-01,Electronics & repair,12,0,0,0,0,0,0
+Ghaziabad,GZB-01,Fitter & maintenance,9,6,0,62,0,0,0
+Ghaziabad,GZB-01,Healthcare & care,5,1,0,50,0,0,0
+Ghaziabad,GZB-01,Helper & general,5,8,2,44,10,2,10
+Ghaziabad,GZB-01,IT & software,28,4,3,12,5,0,0
+Ghaziabad,GZB-01,"ITI, any trade",3,8,0,198,0,0,0
+Ghaziabad,GZB-01,Logistics & delivery,0,5,1,17,1,1,1
+Ghaziabad,GZB-01,Machine & production,22,10,0,27,0,0,0
+Ghaziabad,GZB-01,"Mechanic, auto & AC",21,0,0,0,0,0,0
+Ghaziabad,GZB-01,Not stated,6,13,10,13,10,0,0
+Ghaziabad,GZB-01,Office & data entry,58,9,5,85,15,2,2
+Ghaziabad,GZB-01,Open to anything,57,2,2,6,6,0,0
+Ghaziabad,GZB-01,Other,9,7,2,67,3,2,3
+Ghaziabad,GZB-01,Retail & store,4,4,3,22,17,1,1
+Ghaziabad,GZB-01,Sales & marketing,30,26,6,298,63,0,0
+Ghaziabad,GZB-01,"Studied, no trade stated",903,0,0,0,0,0,0
+Ghaziabad,GZB-01,"Tailoring, fashion & garments",15,3,0,42,0,0,0
+Ghaziabad,GZB-01,Teaching & training,6,0,0,0,0,0,0
+Ghaziabad,GZB-01,Welding & fabrication,9,3,0,9,0,0,0
+Ghaziabad,GZB-02,Accounts & finance,3,1,0,50,0,0,0
+Ghaziabad,GZB-02,Construction & civil,65,0,0,0,0,0,0
+Ghaziabad,GZB-02,Electrical,8,0,0,0,0,0,0
+Ghaziabad,GZB-02,Electronics & repair,149,0,0,0,0,0,0
+Ghaziabad,GZB-02,Fitter & maintenance,2,1,1,4,4,1,4
+Ghaziabad,GZB-02,Healthcare & care,2,0,0,0,0,0,0
+Ghaziabad,GZB-02,IT & software,97,0,0,0,0,0,0
+Ghaziabad,GZB-02,"ITI, any trade",8,0,0,0,0,0,0
+Ghaziabad,GZB-02,Logistics & delivery,1,0,0,0,0,0,0
+Ghaziabad,GZB-02,Machine & production,7,2,1,3,1,1,1
+Ghaziabad,GZB-02,"Mechanic, auto & AC",120,0,0,0,0,0,0
+Ghaziabad,GZB-02,Not stated,0,4,4,4,4,0,0
+Ghaziabad,GZB-02,Office & data entry,8,1,0,1,0,0,0
+Ghaziabad,GZB-02,Open to anything,3,0,0,0,0,0,0
+Ghaziabad,GZB-02,Other,1,2,2,5,5,2,5
+Ghaziabad,GZB-02,Retail & store,2,0,0,0,0,0,0
+Ghaziabad,GZB-02,Sales & marketing,4,7,5,27,15,0,0
+Ghaziabad,GZB-02,"Studied, no trade stated",273,0,0,0,0,0,0
+Ghaziabad,GZB-02,"Tailoring, fashion & garments",1,1,1,2,2,0,0
+Ghaziabad,GZB-02,Welding & fabrication,0,1,0,5,0,0,0
+Ghaziabad,GZB-03,Accounts & finance,8,5,0,5,0,0,0
+Ghaziabad,GZB-03,Construction & civil,3,0,0,0,0,0,0
+Ghaziabad,GZB-03,Electrical,2,0,0,0,0,0,0
+Ghaziabad,GZB-03,Electronics & repair,1,0,0,0,0,0,0
+Ghaziabad,GZB-03,Fitter & maintenance,2,0,0,0,0,0,0
+Ghaziabad,GZB-03,Helper & general,1,1,0,20,0,0,0
+Ghaziabad,GZB-03,IT & software,9,1,0,5,0,0,0
+Ghaziabad,GZB-03,"ITI, any trade",0,1,0,5,0,0,0
+Ghaziabad,GZB-03,Logistics & delivery,1,1,0,1,0,0,0
+Ghaziabad,GZB-03,Machine & production,2,4,0,9,0,0,0
+Ghaziabad,GZB-03,"Mechanic, auto & AC",3,0,0,0,0,0,0
+Ghaziabad,GZB-03,Not stated,1,5,0,5,0,0,0
+Ghaziabad,GZB-03,Office & data entry,9,2,1,7,3,0,0
+Ghaziabad,GZB-03,Open to anything,12,0,0,0,0,0,0
+Ghaziabad,GZB-03,Other,0,2,0,7,0,0,0
+Ghaziabad,GZB-03,Retail & store,0,1,1,10,10,0,0
+Ghaziabad,GZB-03,Sales & marketing,3,0,0,0,0,0,0
+Ghaziabad,GZB-03,"Studied, no trade stated",493,0,0,0,0,0,0
+Ghaziabad,GZB-03,"Tailoring, fashion & garments",3,0,0,0,0,0,0
+Ghaziabad,GZB-03,Teaching & training,3,0,0,0,0,0,0
+Ghaziabad,GZB-03,Welding & fabrication,0,1,0,10,0,0,0
+Ghaziabad,GZB-04,Accounts & finance,2,1,1,4,4,0,0
+Ghaziabad,GZB-04,Customer service,3,0,0,0,0,0,0
+Ghaziabad,GZB-04,Electrical,3,2,1,3,2,1,2
+Ghaziabad,GZB-04,Helper & general,0,2,1,14,4,1,4
+Ghaziabad,GZB-04,IT & software,0,1,0,2,0,0,0
+Ghaziabad,GZB-04,Logistics & delivery,0,1,0,20,0,0,0
+Ghaziabad,GZB-04,Machine & production,1,1,0,50,0,0,0
+Ghaziabad,GZB-04,Not stated,0,1,0,1,0,0,0
+Ghaziabad,GZB-04,Office & data entry,2,0,0,0,0,0,0
+Ghaziabad,GZB-04,Open to anything,2,1,1,10,10,0,0
+Ghaziabad,GZB-04,Other,0,1,0,50,0,0,0
+Ghaziabad,GZB-04,Retail & store,0,4,4,54,54,0,0
+Ghaziabad,GZB-04,Sales & marketing,2,3,3,24,24,0,0
+Ghaziabad,GZB-04,"Studied, no trade stated",184,0,0,0,0,0,0
+Ghaziabad,GZB-05,Accounts & finance,5,5,1,9,4,0,0
+Ghaziabad,GZB-05,Construction & civil,2,0,0,0,0,0,0
+Ghaziabad,GZB-05,Customer service,6,1,0,1,0,0,0
+Ghaziabad,GZB-05,Electrical,4,2,0,5,0,0,0
+Ghaziabad,GZB-05,Electronics & repair,1,0,0,0,0,0,0
+Ghaziabad,GZB-05,Fitter & maintenance,1,2,1,32,30,0,0
+Ghaziabad,GZB-05,Healthcare & care,1,0,0,0,0,0,0
+Ghaziabad,GZB-05,Helper & general,1,1,1,1,1,1,1
+Ghaziabad,GZB-05,IT & software,1,0,0,0,0,0,0
+Ghaziabad,GZB-05,"ITI, any trade",1,2,0,8,0,0,0
+Ghaziabad,GZB-05,Machine & production,1,9,4,77,61,1,25
+Ghaziabad,GZB-05,"Mechanic, auto & AC",1,0,0,0,0,0,0
+Ghaziabad,GZB-05,Not stated,1,4,3,4,3,0,0
+Ghaziabad,GZB-05,Office & data entry,6,4,1,12,3,0,0
+Ghaziabad,GZB-05,Open to anything,15,0,0,0,0,0,0
+Ghaziabad,GZB-05,Other,1,2,0,3,0,0,0
+Ghaziabad,GZB-05,Retail & store,1,1,1,20,20,0,0
+Ghaziabad,GZB-05,Sales & marketing,4,4,2,29,12,0,0
+Ghaziabad,GZB-05,"Studied, no trade stated",585,0,0,0,0,0,0
+Ghaziabad,GZB-05,"Tailoring, fashion & garments",2,0,0,0,0,0,0
+Ghaziabad,GZB-05,Teaching & training,3,0,0,0,0,0,0
+Ghaziabad,GZB-05,Welding & fabrication,1,1,0,2,0,0,0
+Ghaziabad,GZB-06,Accounts & finance,2,0,0,0,0,0,0
+Ghaziabad,GZB-06,Electrical,1,9,1,307,2,0,0
+Ghaziabad,GZB-06,Electronics & repair,1,0,0,0,0,0,0
+Ghaziabad,GZB-06,Fitter & maintenance,1,2,0,100,0,0,0
+Ghaziabad,GZB-06,Healthcare & care,2,0,0,0,0,0,0
+Ghaziabad,GZB-06,Helper & general,0,2,1,100,50,0,0
+Ghaziabad,GZB-06,IT & software,2,0,0,0,0,0,0
+Ghaziabad,GZB-06,"ITI, any trade",0,4,0,157,0,0,0
+Ghaziabad,GZB-06,Machine & production,3,1,0,50,0,0,0
+Ghaziabad,GZB-06,"Mechanic, auto & AC",1,1,0,50,0,0,0
+Ghaziabad,GZB-06,Not stated,0,3,2,3,2,0,0
+Ghaziabad,GZB-06,Office & data entry,6,1,0,50,0,0,0
+Ghaziabad,GZB-06,Open to anything,8,1,1,10,10,0,0
+Ghaziabad,GZB-06,Other,1,0,0,0,0,0,0
+Ghaziabad,GZB-06,Retail & store,1,1,1,10,10,0,0
+Ghaziabad,GZB-06,Sales & marketing,4,8,0,400,0,0,0
+Ghaziabad,GZB-06,"Studied, no trade stated",340,0,0,0,0,0,0
+Ghaziabad,GZB-06,"Tailoring, fashion & garments",3,0,0,0,0,0,0
+Ghaziabad,GZB-06,Teaching & training,2,0,0,0,0,0,0
+Ghaziabad,GZB-06,Welding & fabrication,0,1,0,50,0,0,0
+Ghaziabad,GZB-07,Accounts & finance,1,9,7,16,14,0,0
+Ghaziabad,GZB-07,Customer service,1,0,0,0,0,0,0
+Ghaziabad,GZB-07,Electrical,5,1,0,1,0,0,0
+Ghaziabad,GZB-07,Electronics & repair,1,0,0,0,0,0,0
+Ghaziabad,GZB-07,Fitter & maintenance,1,0,0,0,0,0,0
+Ghaziabad,GZB-07,Healthcare & care,5,0,0,0,0,0,0
+Ghaziabad,GZB-07,Helper & general,3,1,0,5,0,0,0
+Ghaziabad,GZB-07,"ITI, any trade",2,1,0,1,0,0,0
+Ghaziabad,GZB-07,Logistics & delivery,3,2,0,11,0,0,0
+Ghaziabad,GZB-07,Machine & production,13,14,0,46,0,0,0
+Ghaziabad,GZB-07,"Mechanic, auto & AC",2,0,0,0,0,0,0
+Ghaziabad,GZB-07,Not stated,1,2,2,2,2,0,0
+Ghaziabad,GZB-07,Office & data entry,10,3,0,6,0,0,0
+Ghaziabad,GZB-07,Open to anything,31,0,0,0,0,0,0
+Ghaziabad,GZB-07,Other,1,0,0,0,0,0,0
+Ghaziabad,GZB-07,Sales & marketing,5,5,0,8,0,0,0
+Ghaziabad,GZB-07,"Studied, no trade stated",777,0,0,0,0,0,0
+Ghaziabad,GZB-07,"Tailoring, fashion & garments",6,0,0,0,0,0,0
+Ghaziabad,GZB-07,Teaching & training,5,0,0,0,0,0,0
+Ghaziabad,GZB-07,Welding & fabrication,1,1,0,2,0,0,0
+Ghaziabad,GZB-08,Accounts & finance,37,2,0,2,0,0,0
+Ghaziabad,GZB-08,Construction & civil,21,0,0,0,0,0,0
+Ghaziabad,GZB-08,Customer service,49,0,0,0,0,0,0
+Ghaziabad,GZB-08,Electrical,107,0,0,0,0,0,0
+Ghaziabad,GZB-08,Electronics & repair,26,1,1,10,10,0,0
+Ghaziabad,GZB-08,Fitter & maintenance,36,1,0,10,0,0,0
+Ghaziabad,GZB-08,Healthcare & care,3,0,0,0,0,0,0
+Ghaziabad,GZB-08,IT & software,26,0,0,0,0,0,0
+Ghaziabad,GZB-08,"ITI, any trade",139,0,0,0,0,0,0
+Ghaziabad,GZB-08,Logistics & delivery,5,0,0,0,0,0,0
+Ghaziabad,GZB-08,Machine & production,125,4,0,35,0,0,0
+Ghaziabad,GZB-08,"Mechanic, auto & AC",32,0,0,0,0,0,0
+Ghaziabad,GZB-08,Not stated,0,2,2,2,2,0,0
+Ghaziabad,GZB-08,Office & data entry,151,0,0,0,0,0,0
+Ghaziabad,GZB-08,Open to anything,45,0,0,0,0,0,0
+Ghaziabad,GZB-08,Other,13,0,0,0,0,0,0
+Ghaziabad,GZB-08,Sales & marketing,65,4,1,44,15,1,15
+Ghaziabad,GZB-08,"Studied, no trade stated",488,0,0,0,0,0,0
+Ghaziabad,GZB-08,"Tailoring, fashion & garments",40,0,0,0,0,0,0
+Ghaziabad,GZB-08,Teaching & training,3,0,0,0,0,0,0
+Ghaziabad,GZB-08,Welding & fabrication,14,1,0,10,0,0,0
+Ghaziabad,GZB-09,Accounts & finance,17,0,0,0,0,0,0
+Ghaziabad,GZB-09,Construction & civil,1,0,0,0,0,0,0
+Ghaziabad,GZB-09,Customer service,1,0,0,0,0,0,0
+Ghaziabad,GZB-09,Electrical,22,0,0,0,0,0,0
+Ghaziabad,GZB-09,Electronics & repair,5,0,0,0,0,0,0
+Ghaziabad,GZB-09,Fitter & maintenance,8,0,0,0,0,0,0
+Ghaziabad,GZB-09,Healthcare & care,2,0,0,0,0,0,0
+Ghaziabad,GZB-09,Helper & general,1,0,0,0,0,0,0
+Ghaziabad,GZB-09,IT & software,6,0,0,0,0,0,0
+Ghaziabad,GZB-09,"ITI, any trade",5,0,0,0,0,0,0
+Ghaziabad,GZB-09,Logistics & delivery,3,0,0,0,0,0,0
+Ghaziabad,GZB-09,Machine & production,23,0,0,0,0,0,0
+Ghaziabad,GZB-09,"Mechanic, auto & AC",8,0,0,0,0,0,0
+Ghaziabad,GZB-09,Office & data entry,35,0,0,0,0,0,0
+Ghaziabad,GZB-09,Open to anything,28,0,0,0,0,0,0
+Ghaziabad,GZB-09,Other,4,0,0,0,0,0,0
+Ghaziabad,GZB-09,Retail & store,2,0,0,0,0,0,0
+Ghaziabad,GZB-09,Sales & marketing,16,0,0,0,0,0,0
+Ghaziabad,GZB-09,"Studied, no trade stated",785,0,0,0,0,0,0
+Ghaziabad,GZB-09,"Tailoring, fashion & garments",8,0,0,0,0,0,0
+Ghaziabad,GZB-09,Teaching & training,4,0,0,0,0,0,0
+Ghaziabad,GZB-09,Welding & fabrication,7,0,0,0,0,0,0
+Ghaziabad,GZB-10,Accounts & finance,3,1,0,2,0,0,0
+Ghaziabad,GZB-10,Construction & civil,1,0,0,0,0,0,0
+Ghaziabad,GZB-10,Electrical,2,0,0,0,0,0,0
+Ghaziabad,GZB-10,Fitter & maintenance,0,1,0,50,0,0,0
+Ghaziabad,GZB-10,Healthcare & care,3,0,0,0,0,0,0
+Ghaziabad,GZB-10,Helper & general,2,1,0,50,0,0,0
+Ghaziabad,GZB-10,IT & software,2,1,0,5,0,0,0
+Ghaziabad,GZB-10,"ITI, any trade",2,1,0,2,0,0,0
+Ghaziabad,GZB-10,Logistics & delivery,3,1,1,40,40,0,0
+Ghaziabad,GZB-10,Machine & production,4,1,0,2,0,0,0
+Ghaziabad,GZB-10,"Mechanic, auto & AC",2,0,0,0,0,0,0
+Ghaziabad,GZB-10,Not stated,2,1,1,1,1,0,0
+Ghaziabad,GZB-10,Office & data entry,14,1,0,2,0,0,0
+Ghaziabad,GZB-10,Open to anything,15,0,0,0,0,0,0
+Ghaziabad,GZB-10,Other,6,0,0,0,0,0,0
+Ghaziabad,GZB-10,Sales & marketing,1,4,0,39,0,0,0
+Ghaziabad,GZB-10,"Studied, no trade stated",386,0,0,0,0,0,0
+Ghaziabad,GZB-10,"Tailoring, fashion & garments",1,0,0,0,0,0,0
+Ghaziabad,GZB-10,Teaching & training,1,0,0,0,0,0,0
+Ghaziabad,GZB-10,Welding & fabrication,2,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Accounts & finance,1,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Construction & civil,1,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Electrical,4,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Electronics & repair,2,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Healthcare & care,1,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Helper & general,2,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Logistics & delivery,3,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Machine & production,13,1,0,10,0,0,0
+Ghaziabad,GZB-REST,"Mechanic, auto & AC",3,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Not stated,0,1,0,1,0,0,0
+Ghaziabad,GZB-REST,Office & data entry,5,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Open to anything,25,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Sales & marketing,1,0,0,0,0,0,0
+Ghaziabad,GZB-REST,"Studied, no trade stated",490,0,0,0,0,0,0
+Ghaziabad,GZB-REST,"Tailoring, fashion & garments",2,0,0,0,0,0,0
+Ghaziabad,GZB-REST,Teaching & training,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-01,Accounts & finance,186,7,2,27,3,0,0
+Hubli-Dharwad,HDW-01,Construction & civil,50,1,0,1,0,0,0
+Hubli-Dharwad,HDW-01,Customer service,15,3,1,100,30,0,0
+Hubli-Dharwad,HDW-01,Electrical,460,97,1,716,20,0,0
+Hubli-Dharwad,HDW-01,Electronics & repair,203,1,1,10,10,0,0
+Hubli-Dharwad,HDW-01,Fitter & maintenance,355,99,1,531,4,0,0
+Hubli-Dharwad,HDW-01,Healthcare & care,13,1,1,8,8,0,0
+Hubli-Dharwad,HDW-01,Helper & general,5,4,1,10,2,0,0
+Hubli-Dharwad,HDW-01,IT & software,51,1,0,20,0,0,0
+Hubli-Dharwad,HDW-01,"ITI, any trade",217,110,0,595,0,0,0
+Hubli-Dharwad,HDW-01,Logistics & delivery,1,1,1,25,25,0,0
+Hubli-Dharwad,HDW-01,Machine & production,263,189,3,1086,40,0,0
+Hubli-Dharwad,HDW-01,"Mechanic, auto & AC",214,16,1,166,4,0,0
+Hubli-Dharwad,HDW-01,Not stated,0,33,14,35,14,0,0
+Hubli-Dharwad,HDW-01,Office & data entry,105,7,1,60,1,0,0
+Hubli-Dharwad,HDW-01,Open to anything,122,4,2,40,14,0,0
+Hubli-Dharwad,HDW-01,Other,3,13,0,35,0,0,0
+Hubli-Dharwad,HDW-01,Retail & store,0,1,1,10,10,0,0
+Hubli-Dharwad,HDW-01,Sales & marketing,24,18,1,239,15,0,0
+Hubli-Dharwad,HDW-01,"Studied, no trade stated",205,0,0,0,0,0,0
+Hubli-Dharwad,HDW-01,"Tailoring, fashion & garments",113,3,2,18,17,0,0
+Hubli-Dharwad,HDW-01,Teaching & training,24,0,0,0,0,0,0
+Hubli-Dharwad,HDW-01,Welding & fabrication,81,30,1,258,1,0,0
+Hubli-Dharwad,HDW-02,Accounts & finance,3,3,1,3,1,0,0
+Hubli-Dharwad,HDW-02,Construction & civil,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-02,Customer service,1,2,0,30,0,0,0
+Hubli-Dharwad,HDW-02,Electrical,9,8,0,33,0,0,0
+Hubli-Dharwad,HDW-02,Fitter & maintenance,35,8,1,53,10,0,0
+Hubli-Dharwad,HDW-02,Helper & general,0,2,0,20,0,0,0
+Hubli-Dharwad,HDW-02,"ITI, any trade",4,6,0,79,0,0,0
+Hubli-Dharwad,HDW-02,Machine & production,3,30,5,127,56,0,0
+Hubli-Dharwad,HDW-02,"Mechanic, auto & AC",1,1,0,1,0,0,0
+Hubli-Dharwad,HDW-02,Not stated,0,8,5,10,5,0,0
+Hubli-Dharwad,HDW-02,Office & data entry,1,6,0,39,0,0,0
+Hubli-Dharwad,HDW-02,Other,0,1,0,2,0,0,0
+Hubli-Dharwad,HDW-02,Sales & marketing,0,2,0,3,0,0,0
+Hubli-Dharwad,HDW-02,"Tailoring, fashion & garments",1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-02,Welding & fabrication,1,1,1,8,8,0,0
+Hubli-Dharwad,HDW-03,Accounts & finance,0,1,0,4,0,0,0
+Hubli-Dharwad,HDW-03,Electrical,12,6,0,77,0,0,0
+Hubli-Dharwad,HDW-03,Electronics & repair,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-03,Fitter & maintenance,33,5,0,14,0,0,0
+Hubli-Dharwad,HDW-03,Healthcare & care,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-03,Helper & general,0,2,0,4,0,0,0
+Hubli-Dharwad,HDW-03,"ITI, any trade",1,4,0,62,0,0,0
+Hubli-Dharwad,HDW-03,Logistics & delivery,0,4,1,8,2,0,0
+Hubli-Dharwad,HDW-03,Machine & production,4,15,1,158,8,0,0
+Hubli-Dharwad,HDW-03,"Mechanic, auto & AC",2,3,0,5,0,0,0
+Hubli-Dharwad,HDW-03,Not stated,0,2,1,2,1,0,0
+Hubli-Dharwad,HDW-03,Office & data entry,0,3,0,13,0,0,0
+Hubli-Dharwad,HDW-03,Open to anything,0,1,0,1,0,0,0
+Hubli-Dharwad,HDW-03,Sales & marketing,1,2,0,6,0,0,0
+Hubli-Dharwad,HDW-03,"Tailoring, fashion & garments",2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-03,Welding & fabrication,21,3,0,18,0,0,0
+Hubli-Dharwad,HDW-04,Accounts & finance,182,1,1,1,1,0,0
+Hubli-Dharwad,HDW-04,Beauty & wellness,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-04,Construction & civil,24,1,1,20,20,0,0
+Hubli-Dharwad,HDW-04,Customer service,15,0,0,0,0,0,0
+Hubli-Dharwad,HDW-04,Electrical,323,5,0,19,0,0,0
+Hubli-Dharwad,HDW-04,Electronics & repair,120,1,1,50,50,0,0
+Hubli-Dharwad,HDW-04,Fitter & maintenance,414,9,0,71,0,0,0
+Hubli-Dharwad,HDW-04,Healthcare & care,16,0,0,0,0,0,0
+Hubli-Dharwad,HDW-04,Helper & general,0,1,0,1,0,0,0
+Hubli-Dharwad,HDW-04,IT & software,38,0,0,0,0,0,0
+Hubli-Dharwad,HDW-04,"ITI, any trade",122,4,0,109,0,0,0
+Hubli-Dharwad,HDW-04,Machine & production,93,18,6,134,23,0,0
+Hubli-Dharwad,HDW-04,"Mechanic, auto & AC",111,7,0,9,0,0,0
+Hubli-Dharwad,HDW-04,Not stated,1,11,8,11,8,0,0
+Hubli-Dharwad,HDW-04,Office & data entry,94,1,1,5,5,0,0
+Hubli-Dharwad,HDW-04,Open to anything,44,0,0,0,0,0,0
+Hubli-Dharwad,HDW-04,Other,3,1,1,2,2,0,0
+Hubli-Dharwad,HDW-04,Sales & marketing,18,2,0,4,0,0,0
+Hubli-Dharwad,HDW-04,"Studied, no trade stated",248,0,0,0,0,0,0
+Hubli-Dharwad,HDW-04,"Tailoring, fashion & garments",113,2,0,2,0,0,0
+Hubli-Dharwad,HDW-04,Teaching & training,11,0,0,0,0,0,0
+Hubli-Dharwad,HDW-04,Welding & fabrication,47,4,1,36,25,0,0
+Hubli-Dharwad,HDW-05,Accounts & finance,4,2,0,2,0,0,0
+Hubli-Dharwad,HDW-05,Construction & civil,0,1,0,6,0,0,0
+Hubli-Dharwad,HDW-05,Customer service,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-05,Electrical,34,24,1,171,20,0,0
+Hubli-Dharwad,HDW-05,Electronics & repair,2,2,0,4,0,0,0
+Hubli-Dharwad,HDW-05,Fitter & maintenance,30,18,0,164,0,0,0
+Hubli-Dharwad,HDW-05,Helper & general,0,2,0,6,0,0,0
+Hubli-Dharwad,HDW-05,"ITI, any trade",10,4,0,152,0,0,0
+Hubli-Dharwad,HDW-05,Logistics & delivery,0,2,0,3,0,0,0
+Hubli-Dharwad,HDW-05,Machine & production,9,26,0,93,0,0,0
+Hubli-Dharwad,HDW-05,"Mechanic, auto & AC",5,3,0,150,0,0,0
+Hubli-Dharwad,HDW-05,Not stated,0,18,4,23,4,0,0
+Hubli-Dharwad,HDW-05,Office & data entry,5,1,0,1,0,0,0
+Hubli-Dharwad,HDW-05,Other,0,2,0,5,0,0,0
+Hubli-Dharwad,HDW-05,Sales & marketing,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-05,"Tailoring, fashion & garments",7,0,0,0,0,0,0
+Hubli-Dharwad,HDW-05,Welding & fabrication,2,4,0,25,0,0,0
+Hubli-Dharwad,HDW-06,Accounts & finance,43,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Construction & civil,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Customer service,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Electrical,107,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Electronics & repair,41,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Fitter & maintenance,88,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Healthcare & care,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,IT & software,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,"ITI, any trade",12,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Machine & production,39,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,"Mechanic, auto & AC",2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Office & data entry,10,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Open to anything,6,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Sales & marketing,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,"Studied, no trade stated",55,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,"Tailoring, fashion & garments",2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Teaching & training,4,0,0,0,0,0,0
+Hubli-Dharwad,HDW-06,Welding & fabrication,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Accounts & finance,61,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Construction & civil,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Electrical,24,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Electronics & repair,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Fitter & maintenance,20,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Healthcare & care,6,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,IT & software,5,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,"ITI, any trade",5,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Machine & production,8,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,"Mechanic, auto & AC",29,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Office & data entry,8,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Open to anything,5,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Sales & marketing,4,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,"Studied, no trade stated",92,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,"Tailoring, fashion & garments",7,0,0,0,0,0,0
+Hubli-Dharwad,HDW-07,Teaching & training,6,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Accounts & finance,44,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Customer service,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Electrical,34,1,0,1,0,0,0
+Hubli-Dharwad,HDW-08,Electronics & repair,23,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Fitter & maintenance,56,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Healthcare & care,4,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,IT & software,7,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,"ITI, any trade",6,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Machine & production,4,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,"Mechanic, auto & AC",71,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Office & data entry,5,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Open to anything,6,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,"Studied, no trade stated",51,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,"Tailoring, fashion & garments",7,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Teaching & training,11,0,0,0,0,0,0
+Hubli-Dharwad,HDW-08,Welding & fabrication,4,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Accounts & finance,25,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Construction & civil,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Electrical,3,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Electronics & repair,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Fitter & maintenance,4,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Healthcare & care,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,"ITI, any trade",1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Machine & production,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Not stated,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Office & data entry,5,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Open to anything,4,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Sales & marketing,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,"Studied, no trade stated",28,0,0,0,0,0,0
+Hubli-Dharwad,HDW-09,Welding & fabrication,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,Accounts & finance,13,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,Construction & civil,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,Electrical,12,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,IT & software,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,"ITI, any trade",2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,Machine & production,5,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,Office & data entry,16,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,Open to anything,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-10,"Studied, no trade stated",15,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Accounts & finance,3,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Construction & civil,5,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Electrical,82,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Electronics & repair,19,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Fitter & maintenance,111,2,0,20,0,0,0
+Hubli-Dharwad,HDW-REST,IT & software,2,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,"ITI, any trade",19,2,0,55,0,0,0
+Hubli-Dharwad,HDW-REST,Machine & production,36,1,0,1,0,0,0
+Hubli-Dharwad,HDW-REST,"Mechanic, auto & AC",15,4,0,170,0,0,0
+Hubli-Dharwad,HDW-REST,Office & data entry,14,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Open to anything,9,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Other,0,1,0,1,0,0,0
+Hubli-Dharwad,HDW-REST,Sales & marketing,6,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,"Tailoring, fashion & garments",15,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Teaching & training,1,0,0,0,0,0,0
+Hubli-Dharwad,HDW-REST,Welding & fabrication,5,0,0,0,0,0,0

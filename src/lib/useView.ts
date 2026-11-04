@@ -7,6 +7,7 @@ export interface UrlView {
   age: Age;
   market: string;
   pins: boolean;
+  role: string; // role family from families.csv, "" = all roles
 }
 
 function read(): UrlView {
@@ -19,6 +20,7 @@ function read(): UrlView {
     market: q.get("market") ?? "",
     // Pins are off by default: hundreds of dots cluttered the first view.
     pins: q.get("pins") === "1",
+    role: q.get("role") ?? "",
   };
 }
 
@@ -38,6 +40,7 @@ export function useView(): [UrlView, (patch: Partial<UrlView>) => void] {
       const q = new URLSearchParams({ district: next.district, measure: next.measure, age: next.age });
       if (next.market) q.set("market", next.market);
       if (next.pins) q.set("pins", "1");
+      if (next.role) q.set("role", next.role);
       window.history.replaceState(null, "", `?${q}`);
       return next;
     });

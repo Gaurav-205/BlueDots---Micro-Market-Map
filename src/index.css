@@ -191,6 +191,11 @@ b, strong { font-weight: 700; }
 
 /* Ranking table */
 .tablehead { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.select { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--r-full); padding: 6px 30px 6px 14px; max-width: 220px; cursor: pointer; }
+.rolechip { justify-content: space-between; font-size: 13px; background: var(--surface-soft); border-radius: var(--r-lg); padding: 4px 8px; }
+.rolechip .link { margin: 0; font-size: 13px; }
+tbody tr.group td { font-size: 12px; font-weight: 600; color: var(--steel); padding-top: 16px; cursor: default; }
+.skills td:first-child { min-width: 150px; }
 .key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; letter-spacing: 0; color: var(--charcoal); }
 .key span { display: inline-flex; align-items: center; gap: 6px; }
 /* button-ghost: quiet outlined pill. */

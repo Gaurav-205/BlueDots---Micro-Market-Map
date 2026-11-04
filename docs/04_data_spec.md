@@ -87,6 +87,19 @@ A cell can appear twice if it is split between two markets. That is fine.
 
 Counts every application whatever the item's status today, so closed jobs still count. The market panel shows where a market's seekers applied and where applicants to its jobs came from; the map draws arrows to the top 5 destinations. Optional: without the file the section is hidden.
 
+### families.csv: seekers and jobs per market and role family (from `sql/families.sql`, added 2026-11-04)
+
+| Column | Type | Meaning |
+|---|---|---|
+| district | text | |
+| market_id | text | Same ids as markets.csv, REST included |
+| family | text | Kind of work, e.g. Electrical, Fitter & maintenance, Accounts & finance |
+| seekers, postings, postings_recent, openings, openings_recent, postings_30d, openings_30d | integer | Same meaning as in markets.csv, for that family only |
+
+Each seeker or job is in exactly one family: the first rule in `sql/families.sql` whose pattern matches its text (the job's role; the seeker's ITI trade, wanted roles, diploma, vocational course and studies). So a market's families add up to its markets.csv row, give or take new sign-ups between the two exports. Five buckets are not a kind of work and are shown apart: "Studied, no trade stated", "Open to anything", "Not stated", "ITI, any trade", "Other". Optional: without the file the Role filter and Skills tab are hidden.
+
+The Role filter recomputes every view with one family's counts in place of the market totals (same formulas). The Skills tab compares each family's rate with the all-roles district rate, using the same thresholds as the market calls.
+
 ### market_centres.json
 
 The same centres as markets.csv, as JSON. Use it as the single source for centre positions and radius. Fields: market_id, district, market, localities, lat, lng, radius_km.
