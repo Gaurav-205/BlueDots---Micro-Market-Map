@@ -1,0 +1,33 @@
+{
+  "name": "micro-market-map",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "check": "node scripts/check.ts"
+  },
+  "dependencies": {
+    "@turf/turf": "^7.4.0",
+    "@vis.gl/react-google-maps": "^1.10.2",
+    "d3-interpolate": "^3.0.2",
+    "papaparse": "^5.7.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/d3-interpolate": "^3.0.4",
+    "@types/google.maps": "^3.66.9",
+    "@types/node": "^24.19.2",
+    "@types/papaparse": "^5.5.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "oxlint": "^1.89.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.5"
+  }
+}

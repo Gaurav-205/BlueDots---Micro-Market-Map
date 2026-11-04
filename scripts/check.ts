@@ -1,0 +1,62 @@
+// Checks src/lib/logic.ts on public/data against docs/07_expected_results.md, all 8 views.
+// Run: npm run check
+import { readFileSync } from "node:fs";
+import { callLabel, computeDistrict, fmt1, fmtInt, takeaway } from "../src/lib/logic.ts";
+import type { Age, District, MarketRow, Measure } from "../src/lib/logic.ts";
+import { flowCoverage, flowsFor } from "../src/lib/flows.ts";
+import type { FlowRow } from "../src/lib/flows.ts";
+
+const csv = readFileSync(new URL("../public/data/markets.csv", import.meta.url), "utf8").trim().split("\n");
+const head = csv[0].split(",");
+const num = new Set(["lat", "lng", "radius_km", "seekers", "postings", "postings_recent", "openings", "openings_recent"]);
+const markets = csv.slice(1).map((line) => {
+  const cells = line.match(/("[^"]*"|[^,]*)(,|$)/g)!.map((c) => c.replace(/,$/, "").replace(/^"|"$/g, ""));
+  return Object.fromEntries(head.map((h, i) => [h, num.has(h) ? (cells[i] === "" ? null : Number(cells[i])) : cells[i]]));
+}) as unknown as MarketRow[];
+
+const md = readFileSync(new URL("../docs/07_expected_results.md", import.meta.url), "utf8");
+const sections = md.split(/^### /m).slice(1);
+let fails = 0;
+const eq = (what: string, got: string, want: string) => {
+  if (got !== want) { fails++; console.log(`FAIL ${what}\n  got:  ${got}\n  want: ${want}`); }
+};
+
+for (const s of sections) {
+  const [title] = s.split("\n");
+  const [d, m, a] = title.split(", ");
+  const view = {
+    district: d as District,
+    measure: (m === "Openings" ? "openings" : "postings") as Measure,
+    age: (a === "Last 180 days" ? "recent" : "all") as Age,
+  };
+  const r = computeDistrict(markets, null, view);
+  eq(`${title} district rate`, fmt1(r.rate), s.match(/District rate: \*\*([\d.]+)\*\*/)![1]);
+  eq(`${title} freshness`, fmt1(r.recentShare) + "%", s.match(/last 180 days: ([\d.]+%)/)![1]);
+  eq(`${title} takeaway`, takeaway(r, view).filter(Boolean).join(" "), s.match(/Takeaway: "(.*)"/)![1]);
+  const rows = s.split("\n").filter((l) => l.startsWith("| ") && !l.startsWith("| Market"));
+  rows.forEach((l, i) => {
+    const want = l.split("|").slice(1, -1).map((c) => c.trim()).join(" | ");
+    const x = r.markets[i];
+    const got = x
+      ? [x.isRest ? "Rest of district" : x.market, fmtInt(x.seekers), fmtInt(x.demand), fmt1(x.rate), fmt1(x.index), callLabel(x.call)].join(" | ")
+      : "(missing)";
+    eq(`${title} row ${i + 1}`, got, want);
+  });
+}
+// Flows: every application lands in exactly one bucket on each side.
+const fl = readFileSync(new URL("../public/data/flows.csv", import.meta.url), "utf8").trim().split("\n").slice(1).map((l) => {
+  const [district, from_market, to_market, applications, accepted, applications_recent] = l.split(",");
+  return { district, from_market, to_market, applications: +applications, accepted: +accepted, applications_recent: +applications_recent } as FlowRow;
+});
+for (const d of ["Ghaziabad", "Hubli-Dharwad"]) {
+  const ids = new Set(fl.filter((r) => r.district === d).flatMap((r) => [r.from_market, r.to_market]));
+  let outSum = 0;
+  for (const id of ids) {
+    const f = flowsFor(fl.filter((r) => r.district === d), id);
+    for (const s of [f.out, f.in]) eq(`${d} ${id} flow buckets`, String(s.local + s.unplaced + s.placed.reduce((t, l) => t + l.n, 0)), String(s.total));
+    outSum += f.out.total;
+  }
+  eq(`${d} flow total`, String(outSum), String(flowCoverage(fl, d).total));
+}
+console.log(fails ? `${fails} mismatches` : `All ${sections.length} views match`);
+process.exit(fails ? 1 : 0);

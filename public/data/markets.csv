@@ -1,0 +1,23 @@
+district,market_id,market,localities,lat,lng,radius_km,seekers,postings,postings_recent,openings,openings_recent
+Ghaziabad,GZB-01,Ghaziabad City,"Kavi Nagar, Raj Nagar, Navyug Market",28.668,77.44,6,1268,128,39,1067,158
+Ghaziabad,GZB-02,Meerut Road,"Lohia Nagar, Sihani, Nandgram",28.688,77.478,6,754,20,14,101,31
+Ghaziabad,GZB-03,Vijay Nagar and NH-9,"Crossings Republik, Pratap Vihar",28.638,77.425,6,556,24,2,84,13
+Ghaziabad,GZB-04,Indirapuram and Vaishali,Trans-Hindon homes and shops,28.638,77.365,6,199,18,11,232,98
+Ghaziabad,GZB-05,Sahibabad Industrial,"Site IV, Mohan Nagar, Rajendra Nagar",28.68,77.36,6,644,38,14,203,134
+Ghaziabad,GZB-06,Raj Nagar Extension,"Morta, Noor Nagar",28.708,77.425,6,378,34,6,1287,74
+Ghaziabad,GZB-07,Loni and Tronica City,"Loni, Banthla, Tronica City",28.755,77.285,6,874,39,9,98,16
+Ghaziabad,GZB-08,Muradnagar,"Muradnagar town, Patla side",28.778,77.495,6,1425,15,4,113,27
+Ghaziabad,GZB-09,Modinagar,"Modinagar town, Bhojpur side",28.835,77.59,6,991,0,0,0,0
+Ghaziabad,GZB-10,Dasna and Masuri,"NH-9 east, Dasna, Masuri",28.69,77.535,6,452,13,2,193,41
+Ghaziabad,GZB-REST,Rest of district,Places more than 6 km from any market centre,,,6,555,2,0,11,0
+Hubli-Dharwad,HDW-01,Hubballi City,"Old Hubli, Keshwapur, Deshpande Nagar",15.355,75.13,10,2710,639,35,3990,218
+Hubli-Dharwad,HDW-02,Gokul Road and Airport,"West Hubballi, Gokul Road",15.365,75.07,10,60,78,13,408,80
+Hubli-Dharwad,HDW-03,Navanagar to Rayapur,Hubballi-Dharwad corridor,15.41,75.05,10,79,51,3,372,11
+Hubli-Dharwad,HDW-04,Dharwad City,Dharwad town and its north side,15.46,75.015,10,2038,68,20,474,134
+Hubli-Dharwad,HDW-05,Belur and Mummigatti,Industrial belt on NH-48,15.505,74.925,10,110,109,5,805,24
+Hubli-Dharwad,HDW-06,Kalghatgi,Kalghatgi town and villages,15.18,74.97,10,417,0,0,0,0
+Hubli-Dharwad,HDW-07,Kundgol,Kundgol town and villages,15.255,75.25,10,284,0,0,0,0
+Hubli-Dharwad,HDW-08,Navalgund,Navalgund town and villages,15.56,75.355,10,334,1,0,1,0
+Hubli-Dharwad,HDW-09,Annigeri,Annigeri town and villages,15.425,75.43,10,79,0,0,0,0
+Hubli-Dharwad,HDW-10,Alnavar,Alnavar town and villages,15.43,74.74,10,67,0,0,0,0
+Hubli-Dharwad,HDW-REST,Rest of district,Places more than 10 km from any market centre,,,10,342,10,0,247,0

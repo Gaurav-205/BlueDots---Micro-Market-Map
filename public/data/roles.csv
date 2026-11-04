@@ -1,0 +1,63 @@
+district,market_id,job_role,postings,role_rank
+Ghaziabad,GZB-01,ITI (Other),7,1
+Ghaziabad,GZB-01,Tele Salesperson,7,2
+Ghaziabad,GZB-01,Electrician,6,3
+Ghaziabad,GZB-01,Field Salesperson,6,4
+Ghaziabad,GZB-02,Tele Marketing Female,5,1
+Ghaziabad,GZB-02,Any | Cashier & Packer,1,2
+Ghaziabad,GZB-02,Daily marketing,1,3
+Ghaziabad,GZB-02,Die Designer,1,4
+Ghaziabad,GZB-03,accountant,2,1
+Ghaziabad,GZB-03,Machine Operator,2,2
+Ghaziabad,GZB-03,Accountant,1,3
+Ghaziabad,GZB-03,Any | Computer operator,1,4
+Ghaziabad,GZB-04,Any | Crew Member - McDonald's,3,1
+Ghaziabad,GZB-04,Retail Sales Associate,2,2
+Ghaziabad,GZB-04,Accounts Executive,1,3
+Ghaziabad,GZB-04,Any | Picker and loader,1,4
+Ghaziabad,GZB-05,Assembly Line Operator,3,1
+Ghaziabad,GZB-05,Data Entry Operator,2,2
+Ghaziabad,GZB-05,Field Salesperson,2,3
+Ghaziabad,GZB-05,Account accountant,1,4
+Ghaziabad,GZB-06,Electrician,9,1
+Ghaziabad,GZB-06,In Store Promoter,8,2
+Ghaziabad,GZB-06,ITI (Other),3,3
+Ghaziabad,GZB-06,Fitter,2,4
+Ghaziabad,GZB-07,Machine Operator,7,1
+Ghaziabad,GZB-07,Account Supervisor,6,2
+Ghaziabad,GZB-07,Data Entry Operator,3,3
+Ghaziabad,GZB-07,Field Salesperson,3,4
+Ghaziabad,GZB-08,Accounts Associate,1,1
+Ghaziabad,GZB-08,Accounts Executive Trainee,1,2
+Ghaziabad,GZB-08,Any | Manufacturing Helper,1,3
+Ghaziabad,GZB-08,ASM,1,4
+Ghaziabad,GZB-10,Delivery Executive,1,1
+Ghaziabad,GZB-10,Field Salesperson,1,2
+Ghaziabad,GZB-10,Fitter,1,3
+Ghaziabad,GZB-10,ITI (Other) | Area sales manager,1,4
+Ghaziabad,GZB-REST,Manufacturing Trainee,1,1
+Hubli-Dharwad,HDW-01,Machine Operator,151,1
+Hubli-Dharwad,HDW-01,ITI (Other),108,2
+Hubli-Dharwad,HDW-01,Fitter,96,3
+Hubli-Dharwad,HDW-01,Electrician,84,4
+Hubli-Dharwad,HDW-02,Machine Operator,12,1
+Hubli-Dharwad,HDW-02,Electrician,7,2
+Hubli-Dharwad,HDW-02,Fitter,6,3
+Hubli-Dharwad,HDW-02,ITI (Other),4,4
+Hubli-Dharwad,HDW-03,Machine Operator,8,1
+Hubli-Dharwad,HDW-03,Electrician,6,2
+Hubli-Dharwad,HDW-03,Fitter,5,3
+Hubli-Dharwad,HDW-03,Driving,3,4
+Hubli-Dharwad,HDW-04,Fitter,7,1
+Hubli-Dharwad,HDW-04,Machine Operator,7,2
+Hubli-Dharwad,HDW-04,Electrician,5,3
+Hubli-Dharwad,HDW-04,Production Supervisor,5,4
+Hubli-Dharwad,HDW-05,Fitter,17,1
+Hubli-Dharwad,HDW-05,Electrician,15,2
+Hubli-Dharwad,HDW-05,Machine Operator,11,3
+Hubli-Dharwad,HDW-05,Electrical and mechanical maintenance person,4,4
+Hubli-Dharwad,HDW-08,Electrician,1,1
+Hubli-Dharwad,HDW-REST,Mechanic,4,1
+Hubli-Dharwad,HDW-REST,Fitter,2,2
+Hubli-Dharwad,HDW-REST,ITI (Other),2,3
+Hubli-Dharwad,HDW-REST,farmers,1,4

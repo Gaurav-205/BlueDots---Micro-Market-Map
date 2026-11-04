@@ -1,0 +1,182 @@
+[
+  {
+    "market_id": "GZB-01",
+    "district": "Ghaziabad",
+    "market": "Ghaziabad City",
+    "localities": "Kavi Nagar, Raj Nagar, Navyug Market",
+    "lat": 28.668,
+    "lng": 77.44,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-02",
+    "district": "Ghaziabad",
+    "market": "Meerut Road",
+    "localities": "Lohia Nagar, Sihani, Nandgram",
+    "lat": 28.688,
+    "lng": 77.478,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-03",
+    "district": "Ghaziabad",
+    "market": "Vijay Nagar and NH-9",
+    "localities": "Crossings Republik, Pratap Vihar",
+    "lat": 28.638,
+    "lng": 77.425,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-04",
+    "district": "Ghaziabad",
+    "market": "Indirapuram and Vaishali",
+    "localities": "Trans-Hindon homes and shops",
+    "lat": 28.638,
+    "lng": 77.365,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-05",
+    "district": "Ghaziabad",
+    "market": "Sahibabad Industrial",
+    "localities": "Site IV, Mohan Nagar, Rajendra Nagar",
+    "lat": 28.68,
+    "lng": 77.36,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-06",
+    "district": "Ghaziabad",
+    "market": "Raj Nagar Extension",
+    "localities": "Morta, Noor Nagar",
+    "lat": 28.708,
+    "lng": 77.425,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-07",
+    "district": "Ghaziabad",
+    "market": "Loni and Tronica City",
+    "localities": "Loni, Banthla, Tronica City",
+    "lat": 28.755,
+    "lng": 77.285,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-08",
+    "district": "Ghaziabad",
+    "market": "Muradnagar",
+    "localities": "Muradnagar town, Patla side",
+    "lat": 28.778,
+    "lng": 77.495,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-09",
+    "district": "Ghaziabad",
+    "market": "Modinagar",
+    "localities": "Modinagar town, Bhojpur side",
+    "lat": 28.835,
+    "lng": 77.59,
+    "radius_km": 6
+  },
+  {
+    "market_id": "GZB-10",
+    "district": "Ghaziabad",
+    "market": "Dasna and Masuri",
+    "localities": "NH-9 east, Dasna, Masuri",
+    "lat": 28.69,
+    "lng": 77.535,
+    "radius_km": 6
+  },
+  {
+    "market_id": "HDW-01",
+    "district": "Hubli-Dharwad",
+    "market": "Hubballi City",
+    "localities": "Old Hubli, Keshwapur, Deshpande Nagar",
+    "lat": 15.355,
+    "lng": 75.13,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-02",
+    "district": "Hubli-Dharwad",
+    "market": "Gokul Road and Airport",
+    "localities": "West Hubballi, Gokul Road",
+    "lat": 15.365,
+    "lng": 75.07,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-03",
+    "district": "Hubli-Dharwad",
+    "market": "Navanagar to Rayapur",
+    "localities": "Hubballi-Dharwad corridor",
+    "lat": 15.41,
+    "lng": 75.05,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-04",
+    "district": "Hubli-Dharwad",
+    "market": "Dharwad City",
+    "localities": "Dharwad town and its north side",
+    "lat": 15.46,
+    "lng": 75.015,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-05",
+    "district": "Hubli-Dharwad",
+    "market": "Belur and Mummigatti",
+    "localities": "Industrial belt on NH-48",
+    "lat": 15.505,
+    "lng": 74.925,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-06",
+    "district": "Hubli-Dharwad",
+    "market": "Kalghatgi",
+    "localities": "Kalghatgi town and villages",
+    "lat": 15.18,
+    "lng": 74.97,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-07",
+    "district": "Hubli-Dharwad",
+    "market": "Kundgol",
+    "localities": "Kundgol town and villages",
+    "lat": 15.255,
+    "lng": 75.25,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-08",
+    "district": "Hubli-Dharwad",
+    "market": "Navalgund",
+    "localities": "Navalgund town and villages",
+    "lat": 15.56,
+    "lng": 75.355,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-09",
+    "district": "Hubli-Dharwad",
+    "market": "Annigeri",
+    "localities": "Annigeri town and villages",
+    "lat": 15.425,
+    "lng": 75.43,
+    "radius_km": 10
+  },
+  {
+    "market_id": "HDW-10",
+    "district": "Hubli-Dharwad",
+    "market": "Alnavar",
+    "localities": "Alnavar town and villages",
+    "lat": 15.43,
+    "lng": 74.74,
+    "radius_km": 10
+  }
+]
