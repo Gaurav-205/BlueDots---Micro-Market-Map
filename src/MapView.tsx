@@ -20,18 +20,27 @@ const edge = (c: string) => interpolateRgb(c, "#0A1317")(0.3);
 export const zoneColour = (m: MarketResult) =>
   m.call === "Thin data" ? "#E4E8EC" : ((t) => (t < 0.5 ? lo(t * 2) : hi((t - 0.5) * 2)))(zoneT(m.index));
 
-// Quiet grey basemap so the zones carry the colour. Works only without a map ID, so markers are drawn in an OverlayView.
+// Quiet grey basemap so the zones carry the colour, but with roads and town names so people can find their way.
+// Labels are English only (language="en" on APIProvider) to avoid the doubled Hindi/English names.
+// Works only without a map ID, so markers are drawn in an OverlayView.
 const STYLE: google.maps.MapTypeStyle[] = [
-  { elementType: "geometry", stylers: [{ color: "#f4f5f7" }] },
-  // No basemap labels: town names in two scripts competed with the market names.
-  { elementType: "labels", stylers: [{ visibility: "off" }] },
+  { elementType: "geometry", stylers: [{ color: "#f2f3f5" }] },
+  { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#4a5563" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }, { weight: 3 }] },
   { featureType: "poi", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ weight: 0.6 }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#e6e9ed" }] },
-  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#eef1ee" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#dbe7f0" }] },
+  { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
+  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#2a3440" }] },
+  // Roads visible but quiet: grey lines on the light ground, highways a touch stronger.
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#c9d0d8" }] },
+  { featureType: "road.local", elementType: "geometry", stylers: [{ color: "#e2e6ea" }] },
+  { featureType: "road.arterial", elementType: "labels", stylers: [{ visibility: "off" }] },
+  { featureType: "road.local", elementType: "labels", stylers: [{ visibility: "off" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#aeb7c2" }] },
+  { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#6b7480" }] },
+  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#e9eee8" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9dcea" }] },
 ];
 
 const FLOW = "#0143B5";
@@ -74,7 +83,7 @@ export default function MapView(props: Props) {
     );
   }
   return (
-    <APIProvider apiKey={KEY}>
+    <APIProvider apiKey={KEY} language="en">
       <GMap
         mapTypeId={type}
         styles={STYLE}
@@ -163,11 +172,11 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
       .map((poly) => poly[0].map(([lng, lat]) => ({ lat, lng })))
       .map((r) => (ccw(r) ? r : r.reverse()));
     shapes.push(new google.maps.Polygon({
-      map, paths: [frame, ...holes], clickable: false, strokeOpacity: 0, fillColor: "#E6E9ED", fillOpacity: 0.7, zIndex: 0,
+      map, paths: [frame, ...holes], clickable: false, strokeOpacity: 0, fillColor: "#0A1317", fillOpacity: 0.06, zIndex: 0,
     }));
     shapes.push(new google.maps.Polygon({
       map, paths: toPaths(outline), clickable: false,
-      strokeColor: "#0A1317", strokeOpacity: 0.45, strokeWeight: 1.25, fillColor: "#FFFFFF", fillOpacity: 0.75, zIndex: 0,
+      strokeColor: "#0A1317", strokeOpacity: 0.6, strokeWeight: 1.5, fillOpacity: 0, zIndex: 0,
     }));
     const box = map.getDiv();
     for (const z of zones) {
@@ -212,7 +221,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
       const c = zoneColour(m), faded = !!selected && !on;
       p.setOptions({
         fillColor: c,
-        fillOpacity: faded ? 0.2 : on ? 0.62 : 0.5,
+        fillOpacity: faded ? 0.15 : on ? 0.55 : 0.42,
         strokeColor: on ? "#0A1317" : edge(c),
         strokeOpacity: faded ? 0.35 : 0.9,
         strokeWeight: on ? 2.5 : 1.25,
