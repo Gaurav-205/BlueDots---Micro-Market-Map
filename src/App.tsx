@@ -57,21 +57,29 @@ export default function App() {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="logo" aria-hidden />
+          <Logo />
           <div>
-            <h1>Blue Dots micro-markets</h1>
-            <div className="sub">Data as of 4 Nov 2026</div>
+            <h1>Matchmap</h1>
+            <div className="sub">Where job seekers and jobs meet · Blue Dots</div>
           </div>
         </div>
-        <div className="controls">
+        <nav className="controls" aria-label="View">
           <Seg label="District" value={uv.district} onChange={(v) => setView({ district: v })}
             options={[["Ghaziabad", "Ghaziabad"], ["Hubli-Dharwad", "Hubli-Dharwad"]]} />
+          <span className="divider" aria-hidden />
           <Seg label="Count" value={uv.measure} onChange={(v) => setView({ measure: v })}
             options={[["postings", "Postings"], ["openings", "Openings"]]} />
           <Seg label="Period" value={uv.age} onChange={(v) => setView({ age: v })}
             options={[["all", "All live"], ["recent", "Last 180 days"]]} />
-        </div>
+        </nav>
       </header>
+
+      {/* Overview first, then the map to explore, then details in the side panel. */}
+      <section className="overview" aria-label={`${uv.district} overview`}>
+        {s.markets === "error" ? <Failed /> : !result ? <Skel rows={2} /> : (
+          <Overview result={result} view={view} onSelect={(id) => setView({ market: id })} />
+        )}
+      </section>
 
       <main className="body">
         <section className="mapwrap" aria-label="Micro-market map">
@@ -96,13 +104,8 @@ export default function App() {
         <aside className="sidebar">
           {s.markets === "error" ? <Failed /> : !result ? <div className="pad"><Skel rows={5} /></div> : (
             <>
-              <div className="pad summary">
-                <div className="eyebrow">{uv.district} · {fmtInt(result.markets.filter((m) => !m.isRest).length)} micro-markets</div>
-                <Stats result={result} view={view} />
-                <Headlines result={result} view={view} onSelect={(id) => setView({ market: id })} />
-              </div>
               <div className="tabs" role="tablist"><div className="seg">
-                {([["market", selected ? selected.market : "Market"], ["ranking", "Ranking"], ["gaps", "Data gaps"]] as [Tab, string][]).map(([t, label]) => (
+                {([["ranking", "Ranking"], ["market", selected ? selected.market : "Market"], ["gaps", "Data quality"]] as [Tab, string][]).map(([t, label]) => (
                   <button key={t} role="tab" type="button" aria-selected={tab === t} onClick={() => setTab(t)}>{label}</button>
                 ))}
               </div></div>
@@ -144,35 +147,55 @@ function Seg<T extends string>({ label, value, options, onChange }: { label: str
   );
 }
 
-function Stats({ result, view }: { result: DistrictResult; view: View }) {
-  const unit = view.measure === "openings" ? "Openings" : "Postings";
-  return (
-    <div className="stats">
-      <div className="stat hero"><b>{fmt1(result.rate)}</b><span>{unit.toLowerCase()} per 100 seekers</span></div>
-      <div className="stat"><b>{fmtInt(result.seekers)}</b><span>seekers</span></div>
-      <div className="stat"><b>{fmtInt(result.demand)}</b><span>{unit.toLowerCase()}</span></div>
-    </div>
-  );
-}
+// Brand mark: a map pin holding a seeker dot (orange) and a job dot (blue); the white overlap is the match.
+const Logo = () => (
+  <svg className="logo" viewBox="0 0 32 32" aria-hidden>
+    <path d="M16 2C9.6 2 4.5 7 4.5 13.3 4.5 21.6 16 30 16 30s11.5-8.4 11.5-16.7C27.5 7 22.4 2 16 2z" fill="#0A1317" />
+    <circle cx="12.6" cy="13.2" r="4.4" fill="#E8710A" />
+    <circle cx="19.4" cy="13.2" r="4.4" fill="#0064E0" />
+    <path d="M16 10.41A4.4 4.4 0 0 1 16 15.99 4.4 4.4 0 0 1 16 10.41z" fill="#fff" />
+  </svg>
+);
 
-// The two markets to act on first, as clickable cards instead of a paragraph.
-function Headlines({ result, view, onSelect }: { result: DistrictResult; view: View; onSelect: (id: string) => void }) {
+// Key numbers for the district, then the two markets to act on first.
+function Overview({ result, view, onSelect }: { result: DistrictResult; view: View; onSelect: (id: string) => void }) {
   const unit = view.measure === "openings" ? "openings" : "postings";
+  const period = view.age === "recent" ? "Last 180 days" : "All live";
+  const count = result.markets.filter((m) => !m.isRest).length;
   const { top, pocket } = result;
-  if (!top && !pocket) return <p className="muted" style={{ margin: 0 }}>No markets for this district.</p>;
   const card = (m: MarketResult, kind: "hot" | "pocket", label: string, value: string) => (
-    <button type="button" className={`head ${kind}`} onClick={() => onSelect(m.market_id)}>
-      <span className="head-label">{label}</span>
-      <span className="head-name">{m.market}</span>
-      <span className="head-value">{value}</span>
+    <button type="button" className={`insight ${kind}`} onClick={() => onSelect(m.market_id)}>
+      <span className="insight-label">{label}</span>
+      <span className="insight-name">{m.market}</span>
+      <span className="insight-value">{value}</span>
       {/* A pile on one spot may be a signup camp, not real supply. */}
-      {showPileWarning(m) && <span className="head-warn">⚠ {fmt1(m.pile!)}% of seekers on one spot, check first</span>}
+      {showPileWarning(m) && <span className="insight-warn">⚠ {fmt1(m.pile!)}% of seekers on one spot, check first</span>}
     </button>
   );
   return (
-    <div className="heads">
-      {top && card(top, "hot", "Most jobs per seeker", `${fmt1(top.rate)} ${unit} per 100 seekers`)}
-      {pocket && card(pocket, "pocket", "Most seekers, few jobs", `${fmtInt(pocket.seekers)} seekers · ${fmtInt(pocket.demand)} ${unit}`)}
+    <div className="ov">
+      <div className="kpis">
+        <div className="kpi hero">
+          <span className="kpi-label">District average</span>
+          <b>{fmt1(result.rate)}</b>
+          <span className="kpi-note">{unit} per 100 seekers</span>
+        </div>
+        <div className="kpi">
+          <span className="kpi-label">Seekers</span>
+          <b>{fmtInt(result.seekers)}</b>
+          <span className="kpi-note">across {count} micro-markets</span>
+        </div>
+        <div className="kpi">
+          <span className="kpi-label">{unit === "openings" ? "Openings" : "Job postings"}</span>
+          <b>{fmtInt(result.demand)}</b>
+          <span className="kpi-note">{period}</span>
+        </div>
+      </div>
+      <div className="insights">
+        {!top && !pocket && <p className="muted" style={{ margin: 0 }}>No markets for this district.</p>}
+        {top && card(top, "hot", "Most jobs per seeker", `${fmt1(top.rate)} ${unit} per 100 seekers`)}
+        {pocket && card(pocket, "pocket", "Most seekers, few jobs", `${fmtInt(pocket.seekers)} seekers · ${fmtInt(pocket.demand)} ${unit}`)}
+      </div>
     </div>
   );
 }
@@ -188,7 +211,7 @@ function Table({ result, view, selected, onSelect }: { result: DistrictResult; v
     const csv = [head, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = `micro-markets_${view.district}_${view.measure}_${view.age}.csv`;
+    a.download = `matchmap_${view.district}_${view.measure}_${view.age}.csv`;
     a.click();
     // Revoking in the same tick can cancel the download in Safari and Firefox.
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);

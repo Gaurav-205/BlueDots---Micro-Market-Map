@@ -1,4 +1,6 @@
-# Blue Dots micro-market map
+# Matchmap
+
+Where job seekers and jobs meet. A Blue Dots micro-market map.
 
 Internal, read-only map of job seekers vs job postings across 10 micro-markets each in Ghaziabad and Hubli-Dharwad. Built from the app kit in `docs/` (PRD, design, data spec, expected results, SQL).
 

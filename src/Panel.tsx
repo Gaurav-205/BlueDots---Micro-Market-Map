@@ -5,7 +5,7 @@ import { flowsFor } from "./lib/flows";
 import type { FlowRow, MarketFlows } from "./lib/flows";
 
 export const callColour = (c: Call) =>
-  c === "Demand hotspot" ? "#2B8FA6" : c === "Supply pocket" ? "#D06A22" : "#6B7280";
+  c === "Demand hotspot" ? "#0064E0" : c === "Supply pocket" ? "#E8710A" : "#8595A4";
 
 const REC: Record<Call, string> = {
   "Demand hotspot": "treat this as a place to send people. Point KKB campaigns from nearby supply pockets at these employers first, and check the postings are still open before we push them.",
@@ -31,7 +31,7 @@ export default function Panel({ market: m, result, view, roles, flows }: Props) 
   return (
     <div>
       <div className="phead">
-        <h2 className="pname serif">{m.market}</h2>
+        <h2 className="pname">{m.market}</h2>
         <span className="badge" style={{ color: callColour(m.call) }}><span className="cdot" style={{ background: callColour(m.call) }} />{callLabel(m.call)}</span>
       </div>
       {m.localities && <div className="small muted">{m.localities}</div>}

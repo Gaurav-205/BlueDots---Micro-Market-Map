@@ -12,10 +12,10 @@ import { callColour } from "./Panel";
 
 const KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.GOOGLE_MAPS_API_KEY) as string | undefined;
 
-const lo = interpolateRgb("#E07326", "#C3C9D1");
-const hi = interpolateRgb("#C3C9D1", "#1F8AA3");
+const lo = interpolateRgb("#E8710A", "#CBD2D9");
+const hi = interpolateRgb("#CBD2D9", "#0064E0");
 export const zoneColour = (m: MarketResult) =>
-  m.call === "Thin data" ? "#E3E6EA" : ((t) => (t < 0.5 ? lo(t * 2) : hi((t - 0.5) * 2)))(zoneT(m.index));
+  m.call === "Thin data" ? "#E4E8EC" : ((t) => (t < 0.5 ? lo(t * 2) : hi((t - 0.5) * 2)))(zoneT(m.index));
 
 // Quiet grey basemap so the zones carry the colour. Works only without a map ID, so markers are drawn in an OverlayView.
 const STYLE: google.maps.MapTypeStyle[] = [
@@ -29,7 +29,7 @@ const STYLE: google.maps.MapTypeStyle[] = [
   { featureType: "water", elementType: "geometry", stylers: [{ color: "#d7e3ea" }] },
 ];
 
-const FLOW = "#1E6F82";
+const FLOW = "#0143B5";
 
 type Geom = Feature<Polygon | MultiPolygon>;
 const toPaths = (g: Geom) =>
@@ -150,7 +150,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     const shapes: google.maps.Polygon[] = [];
     shapes.push(new google.maps.Polygon({
       map, paths: toPaths(outline), clickable: false,
-      strokeColor: "#1F2933", strokeOpacity: 0.8, strokeWeight: 1.5, fillColor: "#1F2933", fillOpacity: 0.03,
+      strokeColor: "#0A1317", strokeOpacity: 0.8, strokeWeight: 1.5, fillColor: "#0A1317", fillOpacity: 0.03,
     }));
     const box = map.getDiv();
     for (const z of zones) {
@@ -195,7 +195,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
       p.setOptions({
         fillColor: zoneColour(m),
         fillOpacity: selected && !on ? 0.25 : 0.72,
-        strokeColor: on ? "#1F2933" : "#FFFFFF",
+        strokeColor: on ? "#0A1317" : "#FFFFFF",
         strokeWeight: on ? 3 : 1.5,
         zIndex: on ? 2 : 1,
       });
@@ -261,7 +261,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
                 onClick={(e) => { e.stopPropagation(); onSelect(on ? "" : m.market_id); }}
                 onMouseEnter={(e) => { const r = box!.getBoundingClientRect(); setHover({ id: m.market_id, x: e.clientX - r.left, y: e.clientY - r.top }); }}
                 onMouseLeave={() => setHover(null)}>
-                <span className="mk-dot" style={{ width: d, height: d, background: m.call === "Thin data" ? "#9CA3AF" : zoneColour(m) }}>{fmt1(m.rate)}</span>
+                <span className="mk-dot" style={{ width: d, height: d, background: m.call === "Thin data" ? "#8595A4" : zoneColour(m) }}>{fmt1(m.rate)}</span>
                 {named && <span className="mk-name">{m.market}</span>}
               </button>
             );
