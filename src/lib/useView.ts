@@ -16,7 +16,8 @@ function read(): UrlView {
     measure: q.get("measure") === "openings" ? "openings" : "postings",
     age: q.get("age") === "recent" ? "recent" : "all",
     market: q.get("market") ?? "",
-    pins: q.get("pins") !== "0",
+    // Pins are off by default: hundreds of dots cluttered the first view.
+    pins: q.get("pins") === "1",
   };
 }
 
@@ -35,7 +36,7 @@ export function useView(): [UrlView, (patch: Partial<UrlView>) => void] {
       if (patch.district && patch.district !== v.district && !("market" in patch)) next.market = "";
       const q = new URLSearchParams({ district: next.district, measure: next.measure, age: next.age });
       if (next.market) q.set("market", next.market);
-      if (!next.pins) q.set("pins", "0");
+      if (next.pins) q.set("pins", "1");
       window.history.replaceState(null, "", `?${q}`);
       return next;
     });

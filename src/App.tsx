@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
-import { callLabel, computeDistrict, fmt1, fmtInt, showPileWarning, takeaway } from "./lib/logic";
+import { callLabel, computeDistrict, fmt1, fmtInt, showPileWarning } from "./lib/logic";
 import { flowCoverage } from "./lib/flows";
 import type { DistrictResult, MarketResult, View } from "./lib/logic";
 import { useData } from "./lib/useData";
@@ -61,15 +60,15 @@ export default function App() {
           <span className="logo" aria-hidden />
           <div>
             <h1>Blue Dots micro-markets</h1>
-            <div className="sub">Where jobs and job seekers meet · data as of 4 Nov 2026</div>
+            <div className="sub">Data as of 4 Nov 2026</div>
           </div>
         </div>
         <div className="controls">
           <Seg label="District" value={uv.district} onChange={(v) => setView({ district: v })}
             options={[["Ghaziabad", "Ghaziabad"], ["Hubli-Dharwad", "Hubli-Dharwad"]]} />
-          <Seg label="Count demand as" value={uv.measure} onChange={(v) => setView({ measure: v })}
-            options={[["postings", "Job postings"], ["openings", "Openings"]]} />
-          <Seg label="Postings" value={uv.age} onChange={(v) => setView({ age: v })}
+          <Seg label="Count" value={uv.measure} onChange={(v) => setView({ measure: v })}
+            options={[["postings", "Postings"], ["openings", "Openings"]]} />
+          <Seg label="Period" value={uv.age} onChange={(v) => setView({ age: v })}
             options={[["all", "All live"], ["recent", "Last 180 days"]]} />
         </div>
       </header>
@@ -82,15 +81,15 @@ export default function App() {
           ) : mapStatus === "loading" ? <div className="state"><span className="skel" style={{ width: 160 }} /></div>
             : mapStatus === "error" ? <Failed /> : <div className="state">No markets for this district</div>}
           <div className="legend">
-            <div className="legend-title">Jobs per seeker, against the district</div>
+            <div className="legend-title">Jobs per 100 seekers</div>
             <div className="legend-row"><i className="grad" /></div>
             <div className="legend-row legend-ends"><span>More seekers</span><span>More jobs</span></div>
-            <div className="legend-row legend-bubble"><span className="mk-dot mini">4.1</span><span>Demand per 100 seekers · size = seekers</span></div>
-            <label className="legend-row check">
-              <input type="checkbox" checked={uv.pins && cellsOk} disabled={!cellsOk} onChange={(e) => setView({ pins: e.target.checked })} />
-              <span>{cellsOk ? <>Pins: <i className="sw-s" /> seekers <i className="sw-p" /> postings</> : "Pins need cells.csv"}</span>
-            </label>
-            <div className="legend-note">Zones reach {uv.district === "Ghaziabad" ? 6 : 10} km from each centre. Click a market for details.</div>
+            {cellsOk && (
+              <label className="legend-row check">
+                <input type="checkbox" checked={uv.pins} onChange={(e) => setView({ pins: e.target.checked })} />
+                <span>Show seeker and job dots</span>
+              </label>
+            )}
           </div>
         </section>
 
@@ -100,7 +99,7 @@ export default function App() {
               <div className="pad summary">
                 <div className="eyebrow">{uv.district} · {fmtInt(result.markets.filter((m) => !m.isRest).length)} micro-markets</div>
                 <Stats result={result} view={view} />
-                <Takeaway result={result} view={view} />
+                <Headlines result={result} view={view} onSelect={(id) => setView({ market: id })} />
               </div>
               <div className="tabs" role="tablist"><div className="seg">
                 {([["market", selected ? selected.market : "Market"], ["ranking", "Ranking"], ["gaps", "Data gaps"]] as [Tab, string][]).map(([t, label]) => (
@@ -146,43 +145,40 @@ function Seg<T extends string>({ label, value, options, onChange }: { label: str
 }
 
 function Stats({ result, view }: { result: DistrictResult; view: View }) {
-  const unit = view.measure === "openings" ? "Openings" : "Job postings";
+  const unit = view.measure === "openings" ? "Openings" : "Postings";
   return (
     <div className="stats">
-      <div className="stat hero"><b>{fmt1(result.rate)}</b><span>{view.measure === "openings" ? "openings" : "postings"} per 100 seekers</span></div>
-      <div className="stat"><b>{fmtInt(result.seekers)}</b><span>seekers on map</span></div>
-      <div className="stat"><b>{fmtInt(result.demand)}</b><span>{unit.toLowerCase()}{view.age === "recent" ? ", 180 d" : ""}</span></div>
+      <div className="stat hero"><b>{fmt1(result.rate)}</b><span>{unit.toLowerCase()} per 100 seekers</span></div>
+      <div className="stat"><b>{fmtInt(result.seekers)}</b><span>seekers</span></div>
+      <div className="stat"><b>{fmtInt(result.demand)}</b><span>{unit.toLowerCase()}</span></div>
     </div>
   );
 }
 
-// Semibold market names and numbers inside a takeaway sentence.
-function emphasise(text: string, names: string[]): ReactNode[] {
-  const esc = names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  const re = new RegExp(`(${[...esc, "(?<!per |last |[\\d,.])\\d[\\d,]*(?:\\.\\d+)?"].join("|")})`, "g");
-  return text.split(re).map((part, i) => (i % 2 ? <b key={i}>{part}</b> : part));
-}
-
-function Takeaway({ result, view }: { result: DistrictResult; view: View }) {
-  const [a, b] = takeaway(result, view);
-  const names = [result.top?.market, result.pocket?.market].filter(Boolean) as string[];
-  if (!a && !b) return <p className="takeaway muted">No markets for this district.</p>;
-  // A headline market whose seekers mostly sit on one spot may be a signup camp, not real supply.
-  const piled = [result.top, result.pocket].filter((m, i, all) => m && showPileWarning(m) && all.indexOf(m) === i) as MarketResult[];
+// The two markets to act on first, as clickable cards instead of a paragraph.
+function Headlines({ result, view, onSelect }: { result: DistrictResult; view: View; onSelect: (id: string) => void }) {
+  const unit = view.measure === "openings" ? "openings" : "postings";
+  const { top, pocket } = result;
+  if (!top && !pocket) return <p className="muted" style={{ margin: 0 }}>No markets for this district.</p>;
+  const card = (m: MarketResult, kind: "hot" | "pocket", label: string, value: string) => (
+    <button type="button" className={`head ${kind}`} onClick={() => onSelect(m.market_id)}>
+      <span className="head-label">{label}</span>
+      <span className="head-name">{m.market}</span>
+      <span className="head-value">{value}</span>
+      {/* A pile on one spot may be a signup camp, not real supply. */}
+      {showPileWarning(m) && <span className="head-warn">⚠ {fmt1(m.pile!)}% of seekers on one spot, check first</span>}
+    </button>
+  );
   return (
-    <>
-      <p className="takeaway">{a && emphasise(a, names)} {b && emphasise(b, names)}</p>
-      {piled.map((m) => (
-        <p key={m.market_id} className="caveat">
-          Check before acting: {fmt1(m.pile!)}% of {m.market}'s seekers sit on one spot of about 1 km, likely a signup camp, college or town centre.
-        </p>
-      ))}
-    </>
+    <div className="heads">
+      {top && card(top, "hot", "Most jobs per seeker", `${fmt1(top.rate)} ${unit} per 100 seekers`)}
+      {pocket && card(pocket, "pocket", "Most seekers, few jobs", `${fmtInt(pocket.seekers)} seekers · ${fmtInt(pocket.demand)} ${unit}`)}
+    </div>
   );
 }
 
 function Table({ result, view, selected, onSelect }: { result: DistrictResult; view: View; selected: string; onSelect: (id: string) => void }) {
-  const demandHead = (view.measure === "openings" ? "Openings" : "Postings") + (view.age === "recent" ? ", last 180 days" : "");
+  const demandHead = (view.measure === "openings" ? "Openings" : "Postings") + (view.age === "recent" ? " (180 d)" : "");
   const maxRate = Math.max(0, ...result.markets.filter((m) => !m.isRest).map((m) => m.rate));
   const name = (m: MarketResult) => (m.isRest ? "Rest of district" : m.market);
 
@@ -202,22 +198,27 @@ function Table({ result, view, selected, onSelect }: { result: DistrictResult; v
   return (
     <>
       <div className="tablehead">
-        <span className="small muted">Ranked by jobs per seeker. Fewer than 30 seekers is thin.</span>
+        <span className="key">
+          <span><i className="cdot" style={{ background: callColour("Demand hotspot") }} />More jobs</span>
+          <span><i className="cdot" style={{ background: callColour("Supply pocket") }} />More seekers</span>
+          <span><i className="cdot" style={{ background: callColour("Near district rate") }} />Average or thin</span>
+        </span>
         <button className="btn" type="button" onClick={download}>Download CSV</button>
       </div>
       <div className="scroll">
         <table>
           <thead>
-            <tr><th>Market</th><th>Seekers</th><th>{demandHead}</th><th>Per 100</th><th>× district</th></tr>
+            <tr><th>Market</th><th>Seekers</th><th>{demandHead}</th><th>Per 100 seekers</th></tr>
           </thead>
           <tbody>
             {result.markets.map((m) => (
               <tr key={m.market_id} tabIndex={0} aria-selected={m.market_id === selected} className={m.isRest ? "rest" : ""}
                 onClick={() => onSelect(m.market_id)} onKeyDown={(e) => e.key === "Enter" && onSelect(m.market_id)}>
                 <td>
-                  <div className="tname">{!m.isRest && <span className="rank">{result.markets.indexOf(m) + 1}</span>}{name(m)}</div>
-                  <div className="tcall"><span className="cdot" style={{ background: callColour(m.call) }} />{callLabel(m.call)}</div>
-                  {showPileWarning(m) && <div className="tpile" title="Share of seekers on the busiest 1 km spot">{fmt1(m.pile!)}% on one spot</div>}
+                  <div className="tname" title={callLabel(m.call)}>
+                    <span className="rank" style={{ background: callColour(m.call) }}>{m.isRest ? "" : result.markets.indexOf(m) + 1}</span>{name(m)}
+                  </div>
+                  {showPileWarning(m) && <div className="tpile" title="Share of seekers on the busiest 1 km spot">⚠ {fmt1(m.pile!)}% on one spot</div>}
                 </td>
                 <td>{fmtInt(m.seekers)}</td>
                 <td>{fmtInt(m.demand)}</td>
@@ -225,7 +226,6 @@ function Table({ result, view, selected, onSelect }: { result: DistrictResult; v
                   <div>{fmt1(m.rate)}</div>
                   <span className="bar">{!m.isRest && maxRate > 0 && <i style={{ width: `${(100 * m.rate) / maxRate}%` }} />}</span>
                 </td>
-                <td>{fmt1(m.index)}</td>
               </tr>
             ))}
           </tbody>

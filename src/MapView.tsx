@@ -12,25 +12,21 @@ import { callColour } from "./Panel";
 
 const KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.GOOGLE_MAPS_API_KEY) as string | undefined;
 
-const lo = interpolateRgb("#E8833A", "#D5D9DF");
-const hi = interpolateRgb("#D5D9DF", "#2B8FA6");
+const lo = interpolateRgb("#E07326", "#C3C9D1");
+const hi = interpolateRgb("#C3C9D1", "#1F8AA3");
 export const zoneColour = (m: MarketResult) =>
   m.call === "Thin data" ? "#E3E6EA" : ((t) => (t < 0.5 ? lo(t * 2) : hi((t - 0.5) * 2)))(zoneT(m.index));
 
 // Quiet grey basemap so the zones carry the colour. Works only without a map ID, so markers are drawn in an OverlayView.
 const STYLE: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: "#f3f4f6" }] },
-  { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#7b8494" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#f3f4f6" }] },
+  // No basemap labels: town names in two scripts competed with the market names.
+  { elementType: "labels", stylers: [{ visibility: "off" }] },
   { featureType: "poi", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
   { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-  { featureType: "road", elementType: "labels", stylers: [{ visibility: "off" }] },
   { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#e4e7eb" }] },
   { featureType: "water", elementType: "geometry", stylers: [{ color: "#d7e3ea" }] },
-  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#9aa1ab" }] },
-  { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
 ];
 
 const FLOW = "#1E6F82";
@@ -154,7 +150,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     const shapes: google.maps.Polygon[] = [];
     shapes.push(new google.maps.Polygon({
       map, paths: toPaths(outline), clickable: false,
-      strokeColor: "#1F2933", strokeOpacity: 0.55, strokeWeight: 1.25, fillColor: "#1F2933", fillOpacity: 0.03,
+      strokeColor: "#1F2933", strokeOpacity: 0.8, strokeWeight: 1.5, fillColor: "#1F2933", fillOpacity: 0.03,
     }));
     const box = map.getDiv();
     for (const z of zones) {
@@ -198,9 +194,9 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
       const on = id === selected;
       p.setOptions({
         fillColor: zoneColour(m),
-        fillOpacity: selected && !on ? 0.2 : 0.55,
+        fillOpacity: selected && !on ? 0.25 : 0.72,
         strokeColor: on ? "#1F2933" : "#FFFFFF",
-        strokeWeight: on ? 2.5 : 1.5,
+        strokeWeight: on ? 3 : 1.5,
         zIndex: on ? 2 : 1,
       });
     });
@@ -239,7 +235,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     <>
       {selName && links.length > 0 && (
         <div className="flowcap">
-          <i aria-hidden /> Where seekers from <b>{selName}</b> applied · top {links.length} markets, line width = applications
+          <i aria-hidden /> Where seekers from <b>{selName}</b> applied
         </div>
       )}
       {ov && createPortal(

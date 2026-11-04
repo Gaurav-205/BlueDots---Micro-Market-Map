@@ -37,23 +37,18 @@ export default function Panel({ market: m, result, view, roles, flows }: Props) 
       {m.localities && <div className="small muted">{m.localities}</div>}
       <div className="pair">
         <div><span>Seekers</span><b>{fmtInt(m.seekers)}</b></div>
-        <div><span>{view.measure === "openings" ? "Openings" : "Job postings"}{view.age === "recent" ? ", 180 d" : ""}</span><b>{fmtInt(m.demand)}</b></div>
+        <div><span>{view.measure === "openings" ? "Openings" : "Postings"}{view.age === "recent" ? " (180 d)" : ""}</span><b>{fmtInt(m.demand)}</b></div>
       </div>
       <Gauge m={m} district={result.rate} />
-      <div className="rec"><b>What I'd do:</b> {REC[m.call]}</div>
+      <div className="rec"><b>Next step:</b> {REC[m.call]}</div>
       {showPileWarning(m) && (
         <p className="caveat">
-          {fmt1(m.pile!)}% of these seekers sit on a single spot of about 1 km. A pile that big is usually a college, camp or town centre where people were signed up, not where they live, so read this market's seeker count with care.
+          ⚠ {fmt1(m.pile!)}% of these seekers sit on one 1 km spot, likely a signup camp or college. Read the seeker count with care.
         </p>
       )}
-      <dl className="nums">
-        <dt>Live job postings</dt><dd>{fmtInt(m.postings)}</dd>
-        <dt>Posted in last 180 days</dt><dd>{fmtInt(m.postings_recent)}</dd>
-        <dt>Openings (capped at 50 a posting)</dt><dd>{fmtInt(m.openings)}</dd>
-      </dl>
       {roles && (
         <div className="roles">
-          <h3>Roles asked for most here</h3>
+          <h3>Top roles</h3>
           {myRoles.length ? (
             <div className="rolechips">{myRoles.map((r) => <span key={r.role_rank}>{r.job_role} <b>{fmtInt(r.postings)}</b></span>)}</div>
           ) : (
@@ -72,11 +67,11 @@ function Applications({ flows, m, result }: { flows: FlowRow[]; m: MarketResult;
   return (
     <div className="apps">
       <h3>Where seekers here applied</h3>
-      <Side f={f.out} name={name} none="No applications from seekers placed here yet."
-        lead={<>Seekers here applied <b>{fmtInt(f.out.total)}</b> times. <b>{fmtInt(f.out.local)}</b> went to jobs in this market{f.out.accepted ? <>, <b>{fmtInt(f.out.accepted)}</b> were accepted</> : null}.</>} />
+      <Side f={f.out} name={name} none="No applications yet."
+        lead={<><b>{fmtInt(f.out.total)}</b> applications · <b>{fmtInt(f.out.local)}</b> in this market{f.out.accepted ? <> · <b>{fmtInt(f.out.accepted)}</b> accepted</> : null}</>} />
       <h3>Who applied to jobs here</h3>
-      <Side f={f.in} name={name} none="No applications to jobs placed here yet."
-        lead={<>Jobs here got <b>{fmtInt(f.in.total)}</b> applications. <b>{fmtInt(f.in.local)}</b> came from seekers in this market{f.in.accepted ? <>, <b>{fmtInt(f.in.accepted)}</b> were accepted</> : null}.</>} />
+      <Side f={f.in} name={name} none="No applications yet."
+        lead={<><b>{fmtInt(f.in.total)}</b> applications · <b>{fmtInt(f.in.local)}</b> from this market{f.in.accepted ? <> · <b>{fmtInt(f.in.accepted)}</b> accepted</> : null}</>} />
     </div>
   );
 }
@@ -98,7 +93,7 @@ function Side({ f, name, lead, none }: { f: MarketFlows; name: Map<string, strin
           ))}
         </ul>
       )}
-      {f.unplaced > 0 && <p className="small muted" style={{ margin: "4px 0 0" }}>{fmtInt(f.unplaced)} more where the other side has no usable location.</p>}
+      {f.unplaced > 0 && <p className="small muted" style={{ margin: "4px 0 0" }}>+ {fmtInt(f.unplaced)} with no usable location</p>}
     </>
   );
 }
@@ -107,7 +102,7 @@ function Side({ f, name, lead, none }: { f: MarketFlows; name: Map<string, strin
 function Gauge({ m, district }: { m: MarketResult; district: number }) {
   return (
     <div className="gauge">
-      <div className="gauge-head"><span>Demand per 100 seekers</span><b>{fmt1(m.rate)}</b></div>
+      <div className="gauge-head"><span>Jobs per 100 seekers</span><b>{fmt1(m.rate)}</b></div>
       <div className="gauge-bar">
         <i className="gauge-mid" title={`District ${fmt1(district)}`} />
         <i className="gauge-pt" style={{ left: `${100 * zoneT(m.index)}%` }} />
