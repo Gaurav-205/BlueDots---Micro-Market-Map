@@ -8,7 +8,6 @@ import { zonesFor } from "./lib/zones";
 import { JOB, SEEKER } from "./lib/colours";
 import type { DistrictResult, View } from "./lib/logic";
 import type { Data } from "./lib/useData";
-import { flowsFor } from "./lib/flows";
 
 const KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.GOOGLE_MAPS_API_KEY) as string | undefined;
 
@@ -86,8 +85,6 @@ function placeAll(items: { id: string; name: string; x: number; y: number }[], w
   return out;
 }
 
-const FLOW = "#334155";
-
 type Geom = Feature<Polygon | MultiPolygon>;
 const toPaths = (g: Geom) =>
   (g.geometry.type === "Polygon" ? [g.geometry.coordinates] : g.geometry.coordinates).flatMap((poly) =>
@@ -95,14 +92,6 @@ const toPaths = (g: Geom) =>
   );
 
 type LL = { lat: number; lng: number };
-// A gentle arc from a to b (bends to the right of travel) so lines to nearby markets don't stack.
-const arc = (a: LL, b: LL): LL[] => {
-  const c = { lat: (a.lat + b.lat) / 2 - (b.lng - a.lng) * 0.18, lng: (a.lng + b.lng) / 2 + (b.lat - a.lat) * 0.18 };
-  return Array.from({ length: 25 }, (_, i) => {
-    const t = i / 24, u = 1 - t;
-    return { lat: u * u * a.lat + 2 * u * t * c.lat + t * t * b.lat, lng: u * u * a.lng + 2 * u * t * c.lng + t * t * b.lng };
-  });
-};
 
 interface Props {
   data: Data;
@@ -170,15 +159,6 @@ function Layers({ data, result, view, selected, onSelect }: Props) {
   const select = useRef(onSelect);
   select.current = onSelect;
 
-  // Top 5 places the selected market's seekers applied to, with both ends on the map.
-  const links = useMemo(() => {
-    if (!selected || !data.flows) return [];
-    const at = new Map(data.centres!.map((c) => [c.market_id, { lat: c.lat, lng: c.lng }]));
-    const from = at.get(selected);
-    if (!from) return [];
-    return flowsFor(data.flows, selected).out.placed.filter((l) => at.has(l.id)).slice(0, 5)
-      .map((l) => ({ ...l, from, to: at.get(l.id)! }));
-  }, [selected, data.flows, data.centres]);
 
   // Fit to the district outline whenever the district changes.
   useEffect(() => {
@@ -224,17 +204,6 @@ function Layers({ data, result, view, selected, onSelect }: Props) {
     return () => area.setMap(null);
   }, [map, zones, selected]);
 
-  // Curved lines from the selected market to where its seekers applied, width by number of applications.
-  useEffect(() => {
-    if (!map || !links.length) return;
-    const max = links[0].n;
-    const lines = links.map((l) => new google.maps.Polyline({
-      map, path: arc(l.from, l.to), clickable: false, zIndex: 3,
-      strokeColor: FLOW, strokeOpacity: 0.8, strokeWeight: 1.5 + 3 * Math.sqrt(l.n / max),
-      icons: [{ icon: { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, scale: 2, strokeWeight: 1, fillOpacity: 1, fillColor: FLOW, strokeColor: FLOW }, offset: "55%" }],
-    }));
-    return () => lines.forEach((x) => x.setMap(null));
-  }, [map, links]);
 
   const markets = result.markets.filter((m) => !m.isRest && m.lat != null);
 
@@ -254,12 +223,6 @@ function Layers({ data, result, view, selected, onSelect }: Props) {
       { l: w - 200, t: 0, r: w, b: 60 },
       { l: w - 64, t: h - 120, r: w, b: h },
     ];
-    // The application counts on the chosen market's lines are obstacles too.
-    for (const l of links) {
-      const at = arc(l.from, l.to)[17];
-      const c = ov.proj.fromLatLngToContainerPixel(new google.maps.LatLng(at.lat, at.lng))!;
-      blocked.push({ l: c.x - 16, t: c.y - 10, r: c.x + 16, b: c.y + 10 });
-    }
     const boxes = placeAll(items, w, h, blocked);
     return items.map((p) => {
       const b = boxes.get(p.id)!;
@@ -272,12 +235,6 @@ function Layers({ data, result, view, selected, onSelect }: Props) {
     <>
       {ov && createPortal(
         <>
-          {links.map((l) => {
-            // On the line, 70% of the way along, so it doesn't sit on the destination's label.
-            const at = arc(l.from, l.to)[17];
-            const p = ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(at.lat, at.lng))!;
-            return <div key={`f${l.id}`} className="flowtag" style={{ left: p.x, top: p.y }}>{fmtInt(l.n)}</div>;
-          })}
           {placed.map(({ m, x, y, cx, cy, cw, path }) => {
             const on = m.market_id === selected;
             return (

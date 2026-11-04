@@ -122,7 +122,7 @@ export default function App() {
             )}
             <div className="legend-row"><i className="sw" style={{ background: SEEKER }} />Seekers in the market</div>
             <div className="legend-row"><i className="sw" style={{ background: JOB }} />{uv.measure === "openings" ? "Openings" : "Job postings"} in the market</div>
-            <div className="legend-note">{uv.market ? "Lines show where seekers from the chosen market applied; the number is applications." : "Each card is one micro-market. Click one for details."}</div>
+            <div className="legend-note">Each card is one micro-market. Click one for details.</div>
           </div>}
         </section>
 

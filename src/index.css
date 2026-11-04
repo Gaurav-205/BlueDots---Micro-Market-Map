@@ -93,7 +93,6 @@ b, strong { font-weight: 700; }
 .legend-ends { justify-content: space-between; color: var(--steel); font-size: 12px; letter-spacing: 0; margin-top: -4px; }
 @media (max-width: 960px) { .legend { width: 200px; bottom: 16px; padding: 12px; } }
 
-.flowtag { position: absolute; transform: translate(-50%, -50%); background: #fff; border: 1px solid #334155; border-radius: 4px; color: #334155; font-size: 12px; font-weight: 700; line-height: 1; padding: 3px 5px; white-space: nowrap; pointer-events: none; z-index: 900; }
 
 /* Market bubbles */
 /* Market cards (KYD style): a card per market, a pin on its exact point, and a thin line joining them. */
