@@ -102,15 +102,15 @@ b, strong { font-weight: 700; }
 .flowcap { position: absolute; top: 12px; left: 12px; right: 190px; width: max-content; max-width: calc(100% - 200px); z-index: 3; background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 6px 12px; font-size: 13px; color: var(--ink); }
 .flowcap i { display: inline-block; vertical-align: middle; margin-right: 8px; width: 20px; height: 4px; border-radius: 2px; background: #334155; position: relative; }
 .flowcap i::after { content: ""; position: absolute; right: -3px; top: -3px; border: 5px solid transparent; border-left-color: #334155; border-right: 0; }
-.flowtag { position: absolute; transform: translate(-50%, -100%) translateY(-14px); color: #334155; font-size: 12px; font-weight: 600; white-space: nowrap; pointer-events: none; z-index: 900; text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff; }
+.flowtag { position: absolute; transform: translate(-50%, -50%); background: #fff; border: 1px solid #334155; border-radius: 4px; color: #334155; font-size: 12px; font-weight: 700; line-height: 1; padding: 3px 5px; white-space: nowrap; pointer-events: none; z-index: 900; }
 
 /* Market bubbles */
 .mk { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; border: 0; padding: 0; background: none; font: inherit; cursor: pointer; }
 /* Map labels: plain text with a thin white halo, as on a printed map. */
-.mk { --halo: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 3px #fff; }
-.mk-rate { font-size: 15px; font-weight: 700; line-height: 1; color: var(--ink-deep); text-shadow: var(--halo); }
+.mk { --halo: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 3px #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff; }
+.mk-rate { font-size: 16px; font-weight: 800; line-height: 1; color: var(--ink-deep); text-shadow: var(--halo); }
 .mk-rate.thin { color: var(--steel); font-weight: 500; }
-.mk-name { position: absolute; top: 100%; margin-top: 2px; font-size: 12px; font-weight: 600; color: var(--charcoal); white-space: nowrap; text-shadow: var(--halo); }
+.mk-name { position: absolute; top: 100%; margin-top: 2px; font-size: 13px; font-weight: 700; color: var(--ink-deep); white-space: nowrap; text-shadow: var(--halo); }
 .mk:hover .mk-name, .mk:hover .mk-rate { text-decoration: underline; }
 .mk.on .mk-rate { font-size: 17px; }
 .mk.on .mk-name { color: var(--ink-deep); font-weight: 700; }
@@ -210,9 +210,6 @@ tbody tr.group td { font-size: 12px; font-weight: 600; color: var(--steel); padd
 .finding b { color: var(--ink-deep); }
 .finding .link { font-size: 13px; margin: 4px 0 0; }
 .pair small { display: block; font-size: 12px; color: var(--steel); margin-top: 2px; }
-.gaps-h { font-size: 15px; font-weight: 700; color: var(--ink-deep); margin: 8px 0 8px; }
-.issues { margin: 0 0 8px; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; color: var(--charcoal); line-height: 1.5; }
-.issues code { font-size: 12px; background: var(--surface-soft); padding: 1px 4px; border-radius: 4px; }
 .tsub { font-size: 12px; color: var(--steel); padding-left: 14px; font-weight: 400; }
 tbody tr.static { cursor: default; }
 tbody tr.static td:first-child { font-weight: 600; color: var(--ink-deep); }
@@ -238,12 +235,6 @@ tbody tr.rest .rank { visibility: hidden; }
 .bar { display: block; width: 56px; height: 4px; margin: 6px 0 0 auto; background: var(--surface-soft); border-radius: var(--r-full); }
 .bar i { display: block; height: 100%; background: var(--hot); border-radius: var(--r-full); }
 
-/* Data gaps */
-.gaps p { margin: 6px 0 20px; color: var(--charcoal); font-size: 14px; letter-spacing: -0.14px; line-height: 1.43; }
-.meter-head { display: flex; justify-content: space-between; font-size: 14px; letter-spacing: -0.14px; color: var(--charcoal); }
-.meter-head b { color: var(--ink-deep); }
-.meter-bar { display: block; height: 6px; background: var(--surface-soft); border-radius: var(--r-full); margin-top: 6px; }
-.meter-bar i { display: block; height: 100%; background: var(--primary); border-radius: var(--r-full); }
 
 /* Phone: tighten tabs and table. Kept last so it wins over the rules above. */
 @media (max-width: 960px) {

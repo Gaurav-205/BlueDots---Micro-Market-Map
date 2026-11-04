@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { ageLabel, ageSuffix, callLabel, computeDistrict, demandField, fmt1, fmtInt, showPileWarning } from "./lib/logic";
-import { flowCoverage } from "./lib/flows";
 import { familyMarkets, familyTotals, NO_ROLE } from "./lib/families";
 import type { DistrictResult, MarketResult, View } from "./lib/logic";
 import { useData } from "./lib/useData";
-import type { Data, Status } from "./lib/useData";
+import type { Status } from "./lib/useData";
 import { useView } from "./lib/useView";
 import MapView from "./MapView";
 import Panel, { callColour } from "./Panel";
@@ -12,10 +11,7 @@ import Skills from "./Skills";
 import Summary from "./Summary";
 import { STEPS, THIN } from "./lib/colours";
 
-const METHOD =
-  "How the markets are drawn: each seeker or posting goes to its nearest market centre if it is within 6 km (Ghaziabad) or 10 km (Hubli-Dharwad); anything further counts as rest of district. Seeker pins may show where someone was signed up (a college or camp) rather than where they live, and job pins may show the office that entered the posting. Openings are capped at 50 a posting because a few postings list hundreds. District outlines are 2011 census boundaries, simplified. Market centres are my placement of well-known localities and should be checked on a map before this goes outside the team. All counts are aggregated; no personal details are shown.";
-
-type Tab = "summary" | "market" | "ranking" | "skills" | "gaps";
+type Tab = "summary" | "market" | "ranking" | "skills";
 
 const Failed = () => <div className="state"><span className="dot" />Failed to load</div>;
 const Skel = ({ rows = 3 }: { rows?: number }) => (
@@ -144,7 +140,7 @@ export default function App() {
           {s.markets === "error" ? <Failed /> : !result ? <div className="pad"><Skel rows={5} /></div> : (
             <>
               <div className="tabs" role="tablist"><div className="seg">
-                {([["summary", "Summary"], ["ranking", "Ranking"], ...(data.families ? [["skills", "Skills"]] : []), ["market", selected ? selected.market : "Market"], ["gaps", "Data"]] as [Tab, string][]).map(([t, label]) => (
+                {([["summary", "Summary"], ["ranking", "Ranking"], ...(data.families ? [["skills", "Skills"]] : []), ["market", selected ? selected.market : "Market"]] as [Tab, string][]).map(([t, label]) => (
                   <button key={t} role="tab" type="button" aria-selected={tab === t} onClick={() => setTab(t)}>{label}</button>
                 ))}
               </div></div>
@@ -152,12 +148,12 @@ export default function App() {
                 {tab === "summary" && base && (
                   <Summary result={base} view={view} families={data.families} pool={data.pool} flows={data.flows} employers={data.employers}
                     coverage={data.coverage} onMarket={(id) => setView({ market: id })} onRole={(f) => { setView({ role: f }); setTab("skills"); }}
-                    onFresh={() => setView({ age: "30d" })} onData={() => setTab("gaps")} />
+                    onFresh={() => setView({ age: "30d" })} />
                 )}
                 {tab === "skills" && data.families && base && (
                   <Skills families={data.families} pool={data.pool} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} />
                 )}
-                {noDemand && tab !== "gaps" && tab !== "skills" && tab !== "summary" ? empty : tab === "market" && (
+                {noDemand && tab !== "skills" && tab !== "summary" ? empty : tab === "market" && (
                   <>
                     {selected && <button type="button" className="link" onClick={() => setView({ market: "" })}>← All markets</button>}
                     <Panel market={selected} result={result} view={view} flows={data.flows} employers={data.employers}
@@ -168,12 +164,6 @@ export default function App() {
                 )}
                 {!noDemand && tab === "ranking" && (
                   <Table result={result} view={view} selected={uv.market} onSelect={(id) => setView({ market: id === uv.market ? "" : id })} />
-                )}
-                {tab === "gaps" && (
-                  <div className="gaps">
-                    <Gaps data={data} result={result} district={uv.district} />
-                    <p className="small muted" style={{ marginTop: 16 }}>{METHOD}</p>
-                  </div>
                 )}
               </div>
             </>
@@ -269,17 +259,6 @@ function Table({ result, view, selected, onSelect }: { result: DistrictResult; v
   const maxRate = Math.max(0, ...result.markets.filter((m) => !m.isRest).map((m) => m.rate));
   const name = (m: MarketResult) => (m.isRest ? "Rest of district" : m.market);
 
-  const download = () => {
-    const head = ["Market", "Seekers", demandHead, "Per 100 seekers", "Times district rate", "Call"];
-    const rows = result.markets.map((m) => [name(m), m.seekers, m.demand, fmt1(m.rate), fmt1(m.index), callLabel(m.call)]);
-    const csv = [head, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = `matchmap_${view.district}_${view.measure}_${view.age}.csv`;
-    a.click();
-    // Revoking in the same tick can cancel the download in Safari and Firefox.
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  };
 
   if (!result.markets.some((m) => !m.isRest)) return <div className="state">No markets for this district</div>;
   return (
@@ -290,7 +269,6 @@ function Table({ result, view, selected, onSelect }: { result: DistrictResult; v
           <span><i className="cdot" style={{ background: callColour("Supply pocket") }} />More seekers</span>
           <span><i className="cdot" style={{ background: callColour("Near district rate") }} />Average or thin</span>
         </span>
-        <button className="btn" type="button" onClick={download}>Download CSV</button>
       </div>
       <div className="scroll">
         <table>
@@ -322,44 +300,4 @@ function Table({ result, view, selected, onSelect }: { result: DistrictResult; v
   );
 }
 
-function Gaps({ data, result, district }: { data: Data; result: DistrictResult; district: string }) {
-  if (data.status.coverage === "error") return <Failed />;
-  if (!data.coverage) return <Skel />;
-  const seek = data.coverage.find((c) => c.district === district && c.kind === "Seekers");
-  const jobs = data.coverage.find((c) => c.district === district && c.kind === "Job postings");
-  if (!seek || !jobs) return <Failed />;
-  return (
-    <>
-      <Meter label="Seekers placed on map" pct={seek.usable_pct} />
-      <p>Seekers: <b>{fmtInt(seek.usable)}</b> of <b>{fmtInt(seek.total_live)}</b> live profiles (<b>{fmt1(seek.usable_pct)}%</b>) have a real location inside the district. <b>{fmtInt(seek.default_point)}</b> sit on the default pin and <b>{fmtInt(seek.outside_district)}</b> are pinned outside the district.</p>
-      <Meter label="Postings placed on map" pct={jobs.usable_pct} />
-      <p>Jobs: <b>{fmtInt(jobs.usable)}</b> of <b>{fmtInt(jobs.total_live)}</b> live postings (<b>{fmt1(jobs.usable_pct)}%</b>) can be placed on the map. <b>{fmtInt(jobs.no_location)}</b> have no location at all, so real demand is higher than shown.</p>
-      <Meter label="Mapped postings from last 180 days" pct={result.recentShare} />
-      <p>Freshness: only <b>{fmt1(result.recentShare)}%</b> of the postings on this map were posted in the last 180 days. Switch to "Last 30 days" to see only fresh postings.</p>
-      {data.flows && (() => {
-        const f = flowCoverage(data.flows, district);
-        return (
-          <>
-            <Meter label="Applications with both sides on the map" pct={f.pct} />
-            <p>Applications: <b>{fmtInt(f.both)}</b> of <b>{fmtInt(f.total)}</b> applications (<b>{fmt1(f.pct)}%</b>) have both the seeker and the job placed in a market here. The rest have a seeker or job outside the district or without a location, so the "where seekers applied" lists are a sample.</p>
-          </>
-        );
-      })()}
-      <h3 className="gaps-h">Known problems in the source data</h3>
-      <ul className="issues">
-        <li><b>Paused jobs still count as live.</b> 3,607 of 3,710 live postings across both programmes are marked paused (<code>pause_status = Y</code>), yet they still receive applications. Until someone confirms what paused means, every demand figure here may be too high.</li>
-        <li><b>Test postings are live.</b> 12 postings (197 openings) from employers named Test, Test Company, Test Organization, Abcd and Xyz, mostly placed in Hubballi City, are counted in the totals. They are left out of the employer lists only.</li>
-        <li><b>Most postings name no role.</b> 2,062 of 3,710 live postings across both programmes (56%) have no job role. Most of those also have no usable location, so on this map the share is lower (see Summary), but they are demand nobody can match. Making role required when posting a job fixes this at the source.</li>
-        <li><b>Employer names are typed freely.</b> The same company appears under several spellings (Quess Corp four ways, VRL four ways); the employer lists merge the obvious ones.</li>
-      </ul>
-      <p className="small muted">Checked against the database on 4 Nov 2026.</p>
-    </>
-  );
-}
 
-const Meter = ({ label, pct }: { label: string; pct: number }) => (
-  <div className="meter">
-    <div className="meter-head"><span>{label}</span><b>{fmt1(pct)}%</b></div>
-    <span className="meter-bar"><i style={{ width: `${pct}%` }} /></span>
-  </div>
-);

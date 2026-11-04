@@ -216,7 +216,8 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
       const faded = !!selected && !on;
       p.setOptions({
         fillColor: zoneColour(m),
-        fillOpacity: faded ? 0.25 : 0.7,
+        // Nearly opaque so the base map's own town names don't show through and collide with the market labels.
+        fillOpacity: faded ? 0.78 : 0.9,
         strokeColor: on ? "#0A1317" : "#FFFFFF",
         strokeOpacity: 1,
         strokeWeight: on ? 2 : 1,
@@ -256,7 +257,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     <>
       {selName && links.length > 0 && (
         <div className="flowcap">
-          <i aria-hidden /> Where seekers from <b>{selName}</b> applied
+          <i aria-hidden /> Where seekers from <b>{selName}</b> applied (number = applications)
         </div>
       )}
       {ov && createPortal(
@@ -270,8 +271,10 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
             return <div key={`p${i}`} className="pin-p" style={{ left: p.x, top: p.y, ["--d" as string]: `${Math.max(4, 16 * Math.sqrt(c[pinField] / peakP))}px` }} />;
           })}
           {links.map((l) => {
-            const p = ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(l.to.lat, l.to.lng))!;
-            return <div key={`f${l.id}`} className="flowtag" style={{ left: p.x, top: p.y }}>{fmtInt(l.n)} applied</div>;
+            // On the line, 70% of the way along, so it doesn't sit on the destination's label.
+            const at = arc(l.from, l.to)[17];
+            const p = ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(at.lat, at.lng))!;
+            return <div key={`f${l.id}`} className="flowtag" style={{ left: p.x, top: p.y }}>{fmtInt(l.n)}</div>;
           })}
           {placed.map(({ m, x, y, named }) => {
             const on = m.market_id === selected;

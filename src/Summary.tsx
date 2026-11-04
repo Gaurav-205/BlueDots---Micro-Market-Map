@@ -18,7 +18,6 @@ interface Props {
   onMarket: (id: string) => void;
   onRole: (family: string) => void;
   onFresh: () => void;
-  onData: () => void;
 }
 
 type Tone = "good" | "bad" | "note";
@@ -120,7 +119,7 @@ export default function Summary(p: Props) {
   const seek = p.coverage?.find((c) => c.district === view.district && c.kind === "Seekers");
   const trust: Finding[] = [];
   if (seek) trust.push({
-    key: "loc", tone: seek.usable_pct >= 60 ? "note" : "bad", act: p.onData, actLabel: "See data issues",
+    key: "loc", tone: seek.usable_pct >= 60 ? "note" : "bad",
     text: <>Only <b>{fmt1(seek.usable_pct)}%</b> of {fmtInt(seek.total_live)} live seekers have a real location, so the map shows part of the picture. Asking for a location at sign-up would fix this.</>,
   });
   if (p.families) {
@@ -128,7 +127,7 @@ export default function Summary(p: Props) {
     const jobs = t.reduce((a, x) => a + x.demand, 0), noRole = t.find((x) => x.family === "Not stated")?.demand ?? 0;
     const seekers = t.reduce((a, x) => a + x.seekers, 0), school = t.find((x) => x.family === "Studied, no trade stated")?.seekers ?? 0;
     if (jobs && seekers) trust.push({
-      key: "roles", tone: "note", act: p.onData, actLabel: "See data issues",
+      key: "roles", tone: "note",
       text: <><b>{fmt1((100 * noRole) / jobs)}%</b> of postings here name no role and <b>{fmt1((100 * school) / seekers)}%</b> of seekers list only their schooling. Making role required on job posts and asking seekers what work they want would sharpen every match.</>,
     });
   }
