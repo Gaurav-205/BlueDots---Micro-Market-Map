@@ -11,6 +11,7 @@
     "check": "node scripts/check.ts"
   },
   "dependencies": {
+    "@turf/turf": "^7.4.0",
     "@vis.gl/react-google-maps": "^1.10.2",
     "papaparse": "^5.7.0",
     "react": "^19.3.1",

@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { APIProvider, Map as GMap, useMap } from "@vis.gl/react-google-maps";
 import type { Feature, MultiPolygon, Polygon } from "geojson";
+import * as turf from "@turf/turf";
 import { fmtInt } from "./lib/logic";
+import { zonesFor } from "./lib/zones";
 import { JOB, SEEKER } from "./lib/colours";
 import type { DistrictResult, View } from "./lib/logic";
 import type { Data } from "./lib/useData";
@@ -144,15 +146,36 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     return () => ro.disconnect();
   }, [map, outline]);
 
-  // Thin district outline for orientation, and a click on the map (not a card) clears the selection.
+  // Our district stays at full colour; everything outside it is faded (a big box with the district cut out),
+  // and the district gets a dark border. A click on the map (not a card) clears the selection.
   useEffect(() => {
     if (!map || !outline) return;
-    const line = new google.maps.Polygon({
-      map, paths: toPaths(outline), clickable: false, strokeColor: "#0A1317", strokeOpacity: 0.5, strokeWeight: 1.5, fillOpacity: 0, zIndex: 0,
-    });
+    const [w, so, e, n] = turf.bbox(outline);
+    const pad = 3;
+    const frame = [{ lat: n + pad, lng: w - pad }, { lat: n + pad, lng: e + pad }, { lat: so - pad, lng: e + pad }, { lat: so - pad, lng: w - pad }];
+    // A hole only cuts out if it winds opposite to the frame (frame is clockwise, so holes must be counter-clockwise).
+    const ccw = (r: LL[]) => r.reduce((a, p, i) => { const q = r[(i + 1) % r.length]; return a + (p.lng * q.lat - q.lng * p.lat); }, 0) > 0;
+    const holes = (outline.geometry.type === "Polygon" ? [outline.geometry.coordinates] : outline.geometry.coordinates)
+      .map((poly) => poly[0].map(([lng, lat]) => ({ lat, lng })))
+      .map((r) => (ccw(r) ? r : r.reverse()));
+    const shapes = [
+      new google.maps.Polygon({ map, paths: [frame, ...holes], clickable: false, strokeOpacity: 0, fillColor: "#FFFFFF", fillOpacity: 0.6, zIndex: 0 }),
+      new google.maps.Polygon({ map, paths: toPaths(outline), clickable: false, strokeColor: "#0A1317", strokeOpacity: 0.9, strokeWeight: 2.5, fillOpacity: 0, zIndex: 1 }),
+    ];
     const clear = map.addListener("click", () => select.current(""));
-    return () => { line.setMap(null); clear.remove(); };
+    return () => { shapes.forEach((x) => x.setMap(null)); clear.remove(); };
   }, [map, outline]);
+
+  // The chosen market's own area (the same shape the counts use) lights up.
+  const zones = useMemo(() => zonesFor(view.district, data.centres!, data.outlines!), [view.district, data.centres, data.outlines]);
+  useEffect(() => {
+    const z = zones.find((x) => x.properties.market_id === selected);
+    if (!map || !z) return;
+    const area = new google.maps.Polygon({
+      map, paths: toPaths(z), clickable: false, strokeColor: "#b97f00", strokeOpacity: 1, strokeWeight: 3, fillColor: "#b97f00", fillOpacity: 0.18, zIndex: 2,
+    });
+    return () => area.setMap(null);
+  }, [map, zones, selected]);
 
   // Curved lines from the selected market to where its seekers applied, width by number of applications.
   useEffect(() => {
@@ -208,7 +231,8 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
             const on = m.market_id === selected;
             return (
               <div key={m.market_id} className={`area${selected && !on ? " dim" : ""}`} style={{ left: x, top: y, zIndex: on ? 1000 : 100 }}>
-                <svg className="area-leader" width="1" height="1" aria-hidden><line x1="0" y1="0" x2={dx} y2={dy - CARD_LIFT} /></svg>
+                {/* Right-angle path: straight up or down from the pin to the card's level, then across to it (the card hides the end). */}
+                <svg className="area-leader" width="1" height="1" aria-hidden><path d={`M0 0 V${dy - CARD_LIFT} H${dx}`} /></svg>
                 <span className="area-pin" />
                 <button type="button" className={`area-chip${on ? " on" : ""}`} style={{ translate: `${dx}px ${dy - CARD_LIFT}px` }}
                   onClick={(e) => { e.stopPropagation(); onSelect(on ? "" : m.market_id); }}>
