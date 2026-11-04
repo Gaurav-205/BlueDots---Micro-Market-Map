@@ -9,6 +9,7 @@ import { useView } from "./lib/useView";
 import MapView from "./MapView";
 import Panel, { callColour } from "./Panel";
 import Skills from "./Skills";
+import { STEPS, THIN } from "./lib/colours";
 
 const METHOD =
   "How the markets are drawn: each seeker or posting goes to its nearest market centre if it is within 6 km (Ghaziabad) or 10 km (Hubli-Dharwad); anything further counts as rest of district. Seeker pins may show where someone was signed up (a college or camp) rather than where they live, and job pins may show the office that entered the posting. Openings are capped at 50 a posting because a few postings list hundreds. District outlines are 2011 census boundaries, simplified. Market centres are my placement of well-known localities and should be checked on a map before this goes outside the team. All counts are aggregated; no personal details are shown.";
@@ -123,8 +124,11 @@ export default function App() {
                 <button type="button" className="link" onClick={() => setView({ role: "" })}>All roles</button>
               </div>
             )}
-            <div className="legend-row"><i className="grad" /></div>
-            <div className="legend-row legend-ends"><span>More seekers</span><span>More jobs</span></div>
+            <div className="legend-row steps" role="list" aria-label="Times the district rate">
+              {STEPS.map((st) => <i key={st.label} role="listitem" title={st.label} style={{ background: st.colour }} />)}
+            </div>
+            <div className="legend-row legend-ends"><span>More seekers</span><span>Average</span><span>More jobs</span></div>
+            <div className="legend-row legend-thin"><i style={{ background: THIN }} />Under 30 seekers, too few to judge</div>
             {cellsOk && !role && (
               <label className="legend-row check">
                 <input type="checkbox" checked={uv.pins} onChange={(e) => setView({ pins: e.target.checked })} />

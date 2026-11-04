@@ -6,14 +6,6 @@ export type Zone = Feature<Polygon | MultiPolygon, { market_id: string }>;
 
 const memo = new Map<string, Zone[]>();
 
-// Display only: shrink a zone ~200 m and round its corners so zones read as soft tiles with gaps.
-// The assignment rule (and every count) is unchanged. Tiny zones that would vanish keep their exact shape.
-function soften(f: Feature<Polygon | MultiPolygon>): Feature<Polygon | MultiPolygon> {
-  const inner = turf.buffer(f, -0.45, { units: "kilometers" });
-  const round = inner && turf.buffer(inner, 0.25, { units: "kilometers", steps: 8 });
-  return round?.geometry ? (round as Feature<Polygon | MultiPolygon>) : f;
-}
-
 // Zone = Voronoi cell ∩ circle(radius_km) ∩ district outline, matching the SQL assignment rule.
 export function zonesFor(district: string, centres: Centre[], outlines: Outlines): Zone[] {
   const hit = memo.get(district);
@@ -32,7 +24,7 @@ export function zonesFor(district: string, centres: Centre[], outlines: Outlines
     const circle = turf.circle([c.lng, c.lat], c.radius_km, { units: "kilometers", steps: 96 });
     const a = turf.intersect(turf.featureCollection([cell, circle]));
     const b = a && turf.intersect(turf.featureCollection([a, outline]));
-    if (b) zones.push({ ...soften(b), properties: { market_id: c.market_id } } as Zone);
+    if (b) zones.push({ ...b, properties: { market_id: c.market_id } } as Zone);
   });
   memo.set(district, zones);
   return zones;

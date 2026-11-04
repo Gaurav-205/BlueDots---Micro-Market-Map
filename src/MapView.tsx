@@ -2,24 +2,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { APIProvider, Map as GMap, useMap } from "@vis.gl/react-google-maps";
 import type { Feature, MultiPolygon, Polygon } from "geojson";
-import { interpolateRgb } from "d3-interpolate";
 import * as turf from "@turf/turf";
-import { callLabel, fmt1, fmtInt, unitWord, zoneT } from "./lib/logic";
-import type { DistrictResult, MarketResult, View } from "./lib/logic";
+import { callLabel, fmt1, fmtInt, unitWord } from "./lib/logic";
+import type { DistrictResult, View } from "./lib/logic";
 import type { Data } from "./lib/useData";
 import { zonesFor } from "./lib/zones";
 import { flowsFor } from "./lib/flows";
 import { callColour } from "./Panel";
+import { zoneColour } from "./lib/colours";
 
 const KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.GOOGLE_MAPS_API_KEY) as string | undefined;
 
-// Red = more seekers than jobs, green = more jobs (ColorBrewer RdYlGn ends, the most colour-blind-safe red/green pair).
-const lo = interpolateRgb("#D73027", "#D3D7DC");
-const hi = interpolateRgb("#D3D7DC", "#1A9850");
-// Zone edge: the fill colour pulled toward ink, so each tile has a crisp edge in its own hue.
-const edge = (c: string) => interpolateRgb(c, "#0A1317")(0.3);
-export const zoneColour = (m: MarketResult) =>
-  m.call === "Thin data" ? "#E4E8EC" : ((t) => (t < 0.5 ? lo(t * 2) : hi((t - 0.5) * 2)))(zoneT(m.index));
 
 // Quiet light basemap so the zones carry the colour, but with roads and town names so people can find their way.
 // Labels are English only (language="en" on APIProvider) to avoid the doubled Hindi/English names.
@@ -28,12 +21,12 @@ const STYLE: google.maps.MapTypeStyle[] = [
   // Warm paper ground so red and green zones read clearly; roads in soft sand, water in pale blue.
   { elementType: "geometry", stylers: [{ color: "#f6f4ef" }] },
   { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#57534e" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#a39c90" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#fbfaf7" }, { weight: 3 }] },
   { featureType: "poi", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
   { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
-  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#292524" }] },
+  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#8a8378" }] },
   { featureType: "road", elementType: "geometry", stylers: [{ color: "#e2dccf" }] },
   { featureType: "road.local", elementType: "geometry", stylers: [{ color: "#ece7dd" }] },
   { featureType: "road.arterial", elementType: "labels", stylers: [{ visibility: "off" }] },
@@ -207,8 +200,8 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     const max = links[0].n;
     const lines = links.map((l) => new google.maps.Polyline({
       map, path: arc(l.from, l.to), clickable: false, zIndex: 3,
-      strokeColor: FLOW, strokeOpacity: 0.85, strokeWeight: 2 + 5 * Math.sqrt(l.n / max),
-      icons: [{ icon: { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, scale: 2.5, strokeWeight: 1, fillOpacity: 1, fillColor: FLOW, strokeColor: FLOW }, offset: "55%" }],
+      strokeColor: FLOW, strokeOpacity: 0.8, strokeWeight: 1.5 + 3 * Math.sqrt(l.n / max),
+      icons: [{ icon: { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, scale: 2, strokeWeight: 1, fillOpacity: 1, fillColor: FLOW, strokeColor: FLOW }, offset: "55%" }],
     }));
     return () => lines.forEach((x) => x.setMap(null));
   }, [map, links]);
@@ -219,13 +212,14 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
       const m = byId.get(id);
       if (!m) return;
       const on = id === selected;
-      const c = zoneColour(m), faded = !!selected && !on;
+      // Flat classed fills with thin white borders between neighbours, like a printed thematic map.
+      const faded = !!selected && !on;
       p.setOptions({
-        fillColor: c,
-        fillOpacity: faded ? 0.15 : on ? 0.55 : 0.42,
-        strokeColor: on ? "#0A1317" : edge(c),
-        strokeOpacity: faded ? 0.35 : 0.9,
-        strokeWeight: on ? 2.5 : 1.25,
+        fillColor: zoneColour(m),
+        fillOpacity: faded ? 0.25 : 0.7,
+        strokeColor: on ? "#0A1317" : "#FFFFFF",
+        strokeOpacity: 1,
+        strokeWeight: on ? 2 : 1,
         zIndex: on ? 2 : 1,
       });
     });
@@ -236,13 +230,12 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
   const pinField = view.age === "recent" ? "postings_recent" : view.age === "30d" ? "postings_30d" : "postings";
   const peakS = Math.max(1, ...cells.map((c) => c.seekers));
   const peakP = Math.max(1, ...cells.map((c) => c[pinField]));
-  const peakSeekers = Math.max(1, ...markets.map((m) => m.seekers));
   const h = hover && byId.get(hover.id);
   const box = map?.getDiv();
   const w = box?.clientWidth ?? 600, hh = box?.clientHeight ?? 600;
   const selName = selected ? byId.get(selected)?.market : undefined;
 
-  // Place each bubble, then keep a name only if it doesn't collide with one already placed (selected and biggest first).
+  // Each market is a plain text label: its rate, and its name when that doesn't collide with one already placed (selected and biggest first).
   const placed = ov ? (() => {
     const px = (lat: number, lng: number) => ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(lat, lng))!;
     const order = [...markets].sort((a, b) => (b.market_id === selected ? 1 : 0) - (a.market_id === selected ? 1 : 0) || b.seekers - a.seekers);
@@ -250,13 +243,12 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     const hit = (r: [number, number, number, number]) => taken.some((t) => r[0] < t[2] && r[2] > t[0] && r[1] < t[3] && r[3] > t[1]);
     return order.map((m) => {
       const p = px(m.lat!, m.lng!);
-      const d = Math.round(26 + 22 * Math.sqrt(m.seekers / peakSeekers));
-      taken.push([p.x - d / 2, p.y - d / 2, p.x + d / 2, p.y + d / 2]);
-      const lw = m.market.length * 6.6 + 12;
-      const label: [number, number, number, number] = [p.x - lw / 2, p.y + d / 2 + 2, p.x + lw / 2, p.y + d / 2 + 20];
+      taken.push([p.x - 18, p.y - 10, p.x + 18, p.y + 10]);
+      const lw = m.market.length * 6.6 + 8;
+      const label: [number, number, number, number] = [p.x - lw / 2, p.y + 10, p.x + lw / 2, p.y + 26];
       const named = m.market_id === selected || !hit(label);
       if (named) taken.push(label);
-      return { m, x: p.x, y: p.y, d, named };
+      return { m, x: p.x, y: p.y, named };
     });
   })() : [];
 
@@ -281,7 +273,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
             const p = ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(l.to.lat, l.to.lng))!;
             return <div key={`f${l.id}`} className="flowtag" style={{ left: p.x, top: p.y }}>{fmtInt(l.n)} applied</div>;
           })}
-          {placed.map(({ m, x, y, d, named }) => {
+          {placed.map(({ m, x, y, named }) => {
             const on = m.market_id === selected;
             return (
               <button key={m.market_id} type="button" title={m.market}
@@ -290,7 +282,7 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
                 onClick={(e) => { e.stopPropagation(); onSelect(on ? "" : m.market_id); }}
                 onMouseEnter={(e) => { const r = box!.getBoundingClientRect(); setHover({ id: m.market_id, x: e.clientX - r.left, y: e.clientY - r.top }); }}
                 onMouseLeave={() => setHover(null)}>
-                <span className="mk-dot" style={{ width: d, height: d, background: m.call === "Thin data" ? "#8595A4" : zoneColour(m) }}>{fmt1(m.rate)}</span>
+                <span className={`mk-rate${m.call === "Thin data" ? " thin" : ""}`}>{fmt1(m.rate)}</span>
                 {named && <span className="mk-name">{m.market}</span>}
               </button>
             );
