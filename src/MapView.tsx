@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { APIProvider, Map as GMap, useMap } from "@vis.gl/react-google-maps";
 import type { Feature, MultiPolygon, Polygon } from "geojson";
 import { interpolateRgb } from "d3-interpolate";
+import * as turf from "@turf/turf";
 import { callLabel, fmt1, fmtInt, unitWord, zoneT } from "./lib/logic";
 import type { DistrictResult, MarketResult, View } from "./lib/logic";
 import type { Data } from "./lib/useData";
@@ -14,19 +15,23 @@ const KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.GOOGLE_
 
 const lo = interpolateRgb("#E8710A", "#CBD2D9");
 const hi = interpolateRgb("#CBD2D9", "#0064E0");
+// Zone edge: the fill colour pulled toward ink, so each tile has a crisp edge in its own hue.
+const edge = (c: string) => interpolateRgb(c, "#0A1317")(0.3);
 export const zoneColour = (m: MarketResult) =>
   m.call === "Thin data" ? "#E4E8EC" : ((t) => (t < 0.5 ? lo(t * 2) : hi((t - 0.5) * 2)))(zoneT(m.index));
 
 // Quiet grey basemap so the zones carry the colour. Works only without a map ID, so markers are drawn in an OverlayView.
 const STYLE: google.maps.MapTypeStyle[] = [
-  { elementType: "geometry", stylers: [{ color: "#f3f4f6" }] },
+  { elementType: "geometry", stylers: [{ color: "#f4f5f7" }] },
   // No basemap labels: town names in two scripts competed with the market names.
   { elementType: "labels", stylers: [{ visibility: "off" }] },
   { featureType: "poi", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
   { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#e4e7eb" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#d7e3ea" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ weight: 0.6 }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#e6e9ed" }] },
+  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#eef1ee" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#dbe7f0" }] },
 ];
 
 const FLOW = "#0143B5";
@@ -148,14 +153,26 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
   useEffect(() => {
     if (!map || !outline) return;
     const shapes: google.maps.Polygon[] = [];
+    // Fade everything outside the district so the eye stays inside it: a big box with the district cut out.
+    const [w, so, e, n] = turf.bbox(outline);
+    const pad = 3;
+    const frame = [{ lat: n + pad, lng: w - pad }, { lat: n + pad, lng: e + pad }, { lat: so - pad, lng: e + pad }, { lat: so - pad, lng: w - pad }];
+    // A hole only cuts out if it winds opposite to the frame (frame is clockwise, so holes must be counter-clockwise).
+    const ccw = (r: LL[]) => r.reduce((a, p, i) => { const q = r[(i + 1) % r.length]; return a + (p.lng * q.lat - q.lng * p.lat); }, 0) > 0;
+    const holes = (outline.geometry.type === "Polygon" ? [outline.geometry.coordinates] : outline.geometry.coordinates)
+      .map((poly) => poly[0].map(([lng, lat]) => ({ lat, lng })))
+      .map((r) => (ccw(r) ? r : r.reverse()));
+    shapes.push(new google.maps.Polygon({
+      map, paths: [frame, ...holes], clickable: false, strokeOpacity: 0, fillColor: "#E6E9ED", fillOpacity: 0.7, zIndex: 0,
+    }));
     shapes.push(new google.maps.Polygon({
       map, paths: toPaths(outline), clickable: false,
-      strokeColor: "#0A1317", strokeOpacity: 0.8, strokeWeight: 1.5, fillColor: "#0A1317", fillOpacity: 0.03,
+      strokeColor: "#0A1317", strokeOpacity: 0.45, strokeWeight: 1.25, fillColor: "#FFFFFF", fillOpacity: 0.75, zIndex: 0,
     }));
     const box = map.getDiv();
     for (const z of zones) {
       const id = z.properties.market_id;
-      const p = new google.maps.Polygon({ map, paths: toPaths(z), strokeColor: "#FFFFFF", strokeWeight: 1.5, zIndex: 1 });
+      const p = new google.maps.Polygon({ map, paths: toPaths(z), zIndex: 1 });
       const at = (e: google.maps.MapMouseEvent) => {
         const ev = e.domEvent as MouseEvent, r = box.getBoundingClientRect();
         setHover({ id, x: ev.clientX - r.left, y: ev.clientY - r.top });
@@ -192,11 +209,13 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
       const m = byId.get(id);
       if (!m) return;
       const on = id === selected;
+      const c = zoneColour(m), faded = !!selected && !on;
       p.setOptions({
-        fillColor: zoneColour(m),
-        fillOpacity: selected && !on ? 0.25 : 0.72,
-        strokeColor: on ? "#0A1317" : "#FFFFFF",
-        strokeWeight: on ? 3 : 1.5,
+        fillColor: c,
+        fillOpacity: faded ? 0.2 : on ? 0.62 : 0.5,
+        strokeColor: on ? "#0A1317" : edge(c),
+        strokeOpacity: faded ? 0.35 : 0.9,
+        strokeWeight: on ? 2.5 : 1.25,
         zIndex: on ? 2 : 1,
       });
     });
