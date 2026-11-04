@@ -27,6 +27,29 @@ const SPOTS: [number, number][] = [-260, -130, 0, 130, 260]
   .flatMap((dx) => [-138, -92, -46, 0, 46, 92, 138].map((dy): [number, number] => [dx, dy]))
   .sort((a, b) => Math.hypot(a[0] / 1.6, a[1]) - Math.hypot(b[0] / 1.6, b[1]));
 const CARD_LIFT = 40; // cards sit this far above their point, joined to a pin by a short line
+
+// Wide maps put the cards in two columns in the faded area outside the district, so the district itself stays clear.
+const COL_ROOM = 230; // px kept free left and right of the district for the columns
+const ROW = 50; // vertical step between stacked cards
+const LEGEND_H = 170; // the legend (plus its margin and half a card) sits bottom-left; the left column stops above it
+const wide = (el: HTMLElement) => el.clientWidth >= 760;
+
+/** Card per pin in container px: west-side markets go to a left column, east-side to a right one, each stacked in pin order. */
+function placeColumns(pins: { id: string; x: number; y: number }[], box: { left: number; right: number; cx: number }, w: number, h: number) {
+  const out = new Map<string, { x: number; y: number; side: "L" | "R"; lane: number }>();
+  for (const side of ["L", "R"] as const) {
+    const col = pins.filter((p) => (side === "L" ? p.x < box.cx : p.x >= box.cx)).sort((a, b) => a.y - b.y);
+    const top = side === "L" ? 28 : 72; // the Map/Satellite switch sits top-right
+    const bottom = h - (side === "L" ? LEGEND_H + 28 : 28);
+    const ys = col.map((p) => Math.min(Math.max(p.y, top), bottom));
+    for (let i = 1; i < ys.length; i++) ys[i] = Math.max(ys[i], ys[i - 1] + ROW);
+    for (let i = ys.length - 1; i >= 0; i--) ys[i] = Math.max(top, Math.min(ys[i], i === ys.length - 1 ? bottom : ys[i + 1] - ROW));
+    const x = side === "L" ? Math.max(box.left - 16, COL_ROOM - 30) : Math.min(box.right + 16, w - COL_ROOM + 30);
+    // Each line turns at its own lane between the column and the district, so vertical runs never sit on top of each other.
+    col.forEach((p, i) => out.set(p.id, { x, y: ys[i], side, lane: x + (side === "L" ? 1 : -1) * (12 + 6 * i) }));
+  }
+  return out;
+}
 function placeCards(points: { id: string; x: number; y: number }[]): Map<string, [number, number]> {
   const boxes: { x: number; y: number }[] = [];
   const out = new Map<string, [number, number]>();
@@ -61,7 +84,6 @@ interface Props {
   result: DistrictResult;
   view: View;
   selected: string;
-  pins: boolean;
   onSelect: (id: string) => void;
 }
 
@@ -116,11 +138,10 @@ function useOverlay(map: google.maps.Map | null) {
   return ov;
 }
 
-function Layers({ data, result, view, selected, pins, onSelect }: Props) {
+function Layers({ data, result, view, selected, onSelect }: Props) {
   const map = useMap();
   const ov = useOverlay(map);
   const outline = data.outlines!.features.find((f) => f.properties.district === view.district);
-  const byId = useMemo(() => new Map(result.markets.map((m) => [m.market_id, m])), [result]);
   const select = useRef(onSelect);
   select.current = onSelect;
 
@@ -140,7 +161,8 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     const b = new google.maps.LatLngBounds();
     toPaths(outline).flat().forEach((p) => b.extend(p));
     // Refit when the map box changes size too (phone layout settles after the first fit).
-    const fit = () => map.fitBounds(b, 24);
+    // On a wide map leave room left and right for the card columns (see placeColumns); otherwise a small margin.
+    const fit = () => map.fitBounds(b, wide(map.getDiv()) ? { top: 48, bottom: 24, left: COL_ROOM, right: COL_ROOM } : 24);
     const ro = new ResizeObserver(fit);
     ro.observe(map.getDiv());
     return () => ro.disconnect();
@@ -190,51 +212,53 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
   }, [map, links]);
 
   const markets = result.markets.filter((m) => !m.isRest && m.lat != null);
-  const cells = pins && data.cells ? data.cells.filter((c) => c.district === view.district) : [];
-  const pinField = view.age === "recent" ? "postings_recent" : view.age === "30d" ? "postings_30d" : "postings";
-  const peakS = Math.max(1, ...cells.map((c) => c.seekers));
-  const peakP = Math.max(1, ...cells.map((c) => c[pinField]));
-  const selName = selected ? byId.get(selected)?.market : undefined;
 
-  // One card per market (name, seekers, jobs), biggest first; each takes the nearest spot that doesn't cover another card.
-  const placed = ov ? (() => {
+  // One card per market (name, seekers, jobs). Wide map: columns outside the district. Narrow map: KYD's placement
+  // next to each pin (biggest first, nearest free spot). Each card gets a right-angle line to its pin.
+  const placed = ov && map && outline ? (() => {
     const order = [...markets].sort((a, b) => (b.market_id === selected ? 1 : 0) - (a.market_id === selected ? 1 : 0) || b.seekers + b.demand - (a.seekers + a.demand));
     const pts = order.map((m) => ({ m, ...ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(m.lat!, m.lng!))! }));
+    const div = map.getDiv();
+    if (wide(div)) {
+      // Column maths in container px (what the user sees), then shifted back into the overlay's own px.
+      const toC = (lat: number, lng: number) => ov.proj.fromLatLngToContainerPixel(new google.maps.LatLng(lat, lng))!;
+      const [w, s, e, n] = turf.bbox(outline);
+      const nw = toC(n, w), se = toC(s, e);
+      const shift = { x: pts.length ? pts[0].x - toC(order[0].lat!, order[0].lng!).x : 0, y: pts.length ? pts[0].y - toC(order[0].lat!, order[0].lng!).y : 0 };
+      const cols = placeColumns(pts.map((p) => ({ id: p.m.market_id, x: p.x - shift.x, y: p.y - shift.y })),
+        { left: nw.x, right: se.x, cx: (nw.x + se.x) / 2 }, div.clientWidth, div.clientHeight);
+      return pts.map((p) => {
+        const c = cols.get(p.m.market_id)!;
+        const cx = c.x + shift.x - p.x, cy = c.y + shift.y - p.y, lane = c.lane + shift.x - p.x;
+        // Leave the pin sideways, turn at the lane, go up or down to the card's level, then into the card.
+        return { ...p, cx, cy, path: `M0 0 H${lane} V${cy} H${cx}`, anchor: c.side === "L" ? "translate(-100%, -50%)" : "translate(0, -50%)" };
+      });
+    }
     const off = placeCards(pts.map((p) => ({ id: p.m.market_id, x: p.x, y: p.y })));
-    return pts.map((p) => ({ ...p, d: off.get(p.m.market_id)! }));
+    return pts.map((p) => {
+      const [dx, dy] = off.get(p.m.market_id)!;
+      return { ...p, cx: dx, cy: dy - CARD_LIFT, path: `M0 0 V${dy - CARD_LIFT} H${dx}`, anchor: "translate(-50%, -50%)" };
+    });
   })() : [];
 
   return (
     <>
-      {selName && links.length > 0 && (
-        <div className="flowcap">
-          <i aria-hidden /> Where seekers from <b>{selName}</b> applied (number = applications)
-        </div>
-      )}
       {ov && createPortal(
         <>
-          {cells.map((c, i) => {
-            const p = ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(c.cell_lat, c.cell_lng))!;
-            return <div key={`s${i}`} className="pin-s" style={{ left: p.x, top: p.y, ["--d" as string]: `${2 * Math.max(2, 11 * Math.sqrt(c.seekers / peakS))}px` }} />;
-          })}
-          {cells.filter((c) => c[pinField] > 0).map((c, i) => {
-            const p = ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(c.cell_lat, c.cell_lng))!;
-            return <div key={`p${i}`} className="pin-p" style={{ left: p.x, top: p.y, ["--d" as string]: `${Math.max(4, 16 * Math.sqrt(c[pinField] / peakP))}px` }} />;
-          })}
           {links.map((l) => {
             // On the line, 70% of the way along, so it doesn't sit on the destination's label.
             const at = arc(l.from, l.to)[17];
             const p = ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(at.lat, at.lng))!;
             return <div key={`f${l.id}`} className="flowtag" style={{ left: p.x, top: p.y }}>{fmtInt(l.n)}</div>;
           })}
-          {placed.map(({ m, x, y, d: [dx, dy] }) => {
+          {placed.map(({ m, x, y, cx, cy, path, anchor }) => {
             const on = m.market_id === selected;
             return (
               <div key={m.market_id} className={`area${selected && !on ? " dim" : ""}`} style={{ left: x, top: y, zIndex: on ? 1000 : 100 }}>
-                {/* Right-angle path: straight up or down from the pin to the card's level, then across to it (the card hides the end). */}
-                <svg className="area-leader" width="1" height="1" aria-hidden><path d={`M0 0 V${dy - CARD_LIFT} H${dx}`} /></svg>
+                {/* Right-angle path from the pin to its card (90° turns only). */}
+                <svg className="area-leader" width="1" height="1" aria-hidden><path d={path} /></svg>
                 <span className="area-pin" />
-                <button type="button" className={`area-chip${on ? " on" : ""}`} style={{ translate: `${dx}px ${dy - CARD_LIFT}px` }}
+                <button type="button" className={`area-chip${on ? " on" : ""}`} style={{ left: cx, top: cy, transform: anchor }}
                   onClick={(e) => { e.stopPropagation(); onSelect(on ? "" : m.market_id); }}>
                   <b>{m.market.replace(" and ", " & ")}</b>
                   <span>

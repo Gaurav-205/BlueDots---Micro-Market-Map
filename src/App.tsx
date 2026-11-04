@@ -63,7 +63,6 @@ export default function App() {
 
   const s = data.status;
   const mapStatus = worst(s.markets, s.centres, s.outlines);
-  const cellsOk = s.cells === "ok";
   const hasMarkets = !!result?.markets.some((m) => !m.isRest);
   // No postings in the chosen period: every market would score 0 and read as a supply pocket, so say so instead.
   const noDemand = !!result && result.demand === 0 && (uv.age !== "all" || !!role);
@@ -110,7 +109,7 @@ export default function App() {
       <main className="body">
         <section className="mapwrap" aria-label="Micro-market map">
           {noDemand ? <div className="state">{empty}</div> : mapStatus === "ok" && result && hasMarkets ? (
-            <MapView data={data} result={result} view={view} selected={uv.market} pins={uv.pins && cellsOk && !role}
+            <MapView data={data} result={result} view={view} selected={uv.market}
               onSelect={(id) => setView({ market: id })} />
           ) : mapStatus === "loading" ? <div className="state"><span className="skel" style={{ width: 160 }} /></div>
             : mapStatus === "error" ? <Failed /> : <div className="state">No markets for this district</div>}
@@ -123,13 +122,7 @@ export default function App() {
             )}
             <div className="legend-row"><i className="sw" style={{ background: SEEKER }} />Seekers in the market</div>
             <div className="legend-row"><i className="sw" style={{ background: JOB }} />{uv.measure === "openings" ? "Openings" : "Job postings"} in the market</div>
-            <div className="legend-note">Each card is one micro-market. Click one for details.</div>
-            {cellsOk && !role && (
-              <label className="legend-row check">
-                <input type="checkbox" checked={uv.pins} onChange={(e) => setView({ pins: e.target.checked })} />
-                <span>Show seeker and job dots</span>
-              </label>
-            )}
+            <div className="legend-note">{uv.market ? "Lines show where seekers from the chosen market applied; the number is applications." : "Each card is one micro-market. Click one for details."}</div>
           </div>}
         </section>
 
