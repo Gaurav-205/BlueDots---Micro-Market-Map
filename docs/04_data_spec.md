@@ -37,6 +37,8 @@ A fresh export from `sql/markets.sql` has extra columns (postings_per_100 and so
 
 ### roles.csv: top 4 named roles per market
 
+Not read by the app since 2026-11-04: the "Kinds of work here" table (families.csv) replaces the top-roles chips, which repeated it with raw labels such as "ITI (Other)". The file is kept for reference.
+
 | Column | Type | Meaning |
 |---|---|---|
 | district | text | |

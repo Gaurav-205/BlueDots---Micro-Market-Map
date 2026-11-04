@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ageLabel, ageSuffix, callLabel, computeDistrict, fmt1, fmtInt, showPileWarning } from "./lib/logic";
+import { ageLabel, ageSuffix, callLabel, computeDistrict, demandField, fmt1, fmtInt, showPileWarning } from "./lib/logic";
 import { flowCoverage } from "./lib/flows";
 import { familyMarkets, familyTotals, NO_ROLE } from "./lib/families";
 import type { DistrictResult, MarketResult, View } from "./lib/logic";
@@ -9,12 +9,13 @@ import { useView } from "./lib/useView";
 import MapView from "./MapView";
 import Panel, { callColour } from "./Panel";
 import Skills from "./Skills";
+import Summary from "./Summary";
 import { STEPS, THIN } from "./lib/colours";
 
 const METHOD =
   "How the markets are drawn: each seeker or posting goes to its nearest market centre if it is within 6 km (Ghaziabad) or 10 km (Hubli-Dharwad); anything further counts as rest of district. Seeker pins may show where someone was signed up (a college or camp) rather than where they live, and job pins may show the office that entered the posting. Openings are capped at 50 a posting because a few postings list hundreds. District outlines are 2011 census boundaries, simplified. Market centres are my placement of well-known localities and should be checked on a map before this goes outside the team. All counts are aggregated; no personal details are shown.";
 
-type Tab = "market" | "ranking" | "skills" | "gaps";
+type Tab = "summary" | "market" | "ranking" | "skills" | "gaps";
 
 const Failed = () => <div className="state"><span className="dot" />Failed to load</div>;
 const Skel = ({ rows = 3 }: { rows?: number }) => (
@@ -26,7 +27,7 @@ export default function App() {
   const data = useData();
   const [uv, setView] = useView();
   const view: View = { district: uv.district, measure: uv.measure, age: uv.age };
-  const [tab, setTab] = useState<Tab>(uv.market ? "market" : "ranking");
+  const [tab, setTab] = useState<Tab>(uv.market ? "market" : "summary");
 
   const base = useMemo(
     () => (data.markets ? computeDistrict(data.markets, data.cells, view) : null),
@@ -55,7 +56,7 @@ export default function App() {
 
   // Selecting a market opens its tab; clearing it goes back to the ranking.
   useEffect(() => {
-    setTab((t) => (uv.market ? "market" : t === "market" ? "ranking" : t));
+    setTab((t) => (uv.market ? "market" : t === "market" ? "summary" : t));
   }, [uv.market]);
 
   useEffect(() => {
@@ -105,7 +106,8 @@ export default function App() {
       {/* Overview first, then the map to explore, then details in the side panel. */}
       <section className="overview" aria-label={`${uv.district} overview`}>
         {s.markets === "error" ? <Failed /> : !result ? <Skel rows={2} /> : (
-          <Overview result={result} view={view} role={role} onSelect={(id) => setView({ market: id })} hideInsights={noDemand} />
+          <Overview result={result} view={view} role={role} onSelect={(id) => setView({ market: id })} hideInsights={noDemand}
+            seekersLive={data.coverage?.find((c) => c.district === uv.district && c.kind === "Seekers")?.total_live} />
         )}
       </section>
 
@@ -117,7 +119,7 @@ export default function App() {
           ) : mapStatus === "loading" ? <div className="state"><span className="skel" style={{ width: 160 }} /></div>
             : mapStatus === "error" ? <Failed /> : <div className="state">No markets for this district</div>}
           {!noDemand && <div className="legend">
-            <div className="legend-title">Jobs per 100 seekers</div>
+            <div className="legend-title">{uv.measure === "openings" ? "Openings" : "Postings"} per 100 seekers, against the district</div>
             {role && (
               <div className="legend-row rolechip">
                 <span>Only <b>{role}</b></span>
@@ -142,18 +144,23 @@ export default function App() {
           {s.markets === "error" ? <Failed /> : !result ? <div className="pad"><Skel rows={5} /></div> : (
             <>
               <div className="tabs" role="tablist"><div className="seg">
-                {([["ranking", "Ranking"], ...(data.families ? [["skills", "Skills"]] : []), ["market", selected ? selected.market : "Market"], ["gaps", "Data quality"]] as [Tab, string][]).map(([t, label]) => (
+                {([["summary", "Summary"], ["ranking", "Ranking"], ...(data.families ? [["skills", "Skills"]] : []), ["market", selected ? selected.market : "Market"], ["gaps", "Data"]] as [Tab, string][]).map(([t, label]) => (
                   <button key={t} role="tab" type="button" aria-selected={tab === t} onClick={() => setTab(t)}>{label}</button>
                 ))}
               </div></div>
               <div className="pad tabbody">
+                {tab === "summary" && base && (
+                  <Summary result={base} view={view} families={data.families} pool={data.pool} flows={data.flows} employers={data.employers}
+                    coverage={data.coverage} onMarket={(id) => setView({ market: id })} onRole={(f) => { setView({ role: f }); setTab("skills"); }}
+                    onFresh={() => setView({ age: "30d" })} onData={() => setTab("gaps")} />
+                )}
                 {tab === "skills" && data.families && base && (
                   <Skills families={data.families} pool={data.pool} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} />
                 )}
-                {noDemand && tab !== "gaps" && tab !== "skills" ? empty : tab === "market" && (
+                {noDemand && tab !== "gaps" && tab !== "skills" && tab !== "summary" ? empty : tab === "market" && (
                   <>
                     {selected && <button type="button" className="link" onClick={() => setView({ market: "" })}>← All markets</button>}
-                    <Panel market={selected} result={result} view={view} roles={data.roles} flows={data.flows} employers={data.employers}
+                    <Panel market={selected} result={result} view={view} flows={data.flows} employers={data.employers}
                       skills={data.families && base && selected && !selected.isRest
                         ? <Skills families={data.families} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} marketId={selected.market_id} limit={6} pool={data.pool} />
                         : null} />
@@ -213,7 +220,9 @@ function NoDemand({ district, view, role, onAll }: { district: string; view: Vie
   );
 }
 
-function Overview({ result, view, role, onSelect, hideInsights }: { result: DistrictResult; view: View; role: string; onSelect: (id: string) => void; hideInsights: boolean }) {
+function Overview({ result, view, role, onSelect, hideInsights, seekersLive }: { result: DistrictResult; view: View; role: string; onSelect: (id: string) => void; hideInsights: boolean; seekersLive?: number }) {
+  // Context for the counts: how many live profiles the seekers figure covers, and how much of the demand is recent.
+  const fresh = result.markets.reduce((s, m) => s + (m[demandField(view.measure, "30d")] || 0), 0);
   const unit = view.measure === "openings" ? "openings" : "postings";
   const period = ageLabel(view.age);
   const count = result.markets.filter((m) => !m.isRest).length;
@@ -238,12 +247,12 @@ function Overview({ result, view, role, onSelect, hideInsights }: { result: Dist
         <div className="kpi">
           <span className="kpi-label">Seekers</span>
           <b>{fmtInt(result.seekers)}</b>
-          <span className="kpi-note">{role ? "in this kind of work" : `across ${count} micro-markets`}</span>
+          <span className="kpi-note">{role ? "in this kind of work" : seekersLive ? `placed on map, of ${fmtInt(seekersLive)} live` : `across ${count} micro-markets`}</span>
         </div>
         <div className="kpi">
           <span className="kpi-label">{unit === "openings" ? "Openings" : "Job postings"}</span>
           <b>{fmtInt(result.demand)}</b>
-          <span className="kpi-note">{period}</span>
+          <span className="kpi-note">{view.age === "all" ? `${fmtInt(fresh)} added in the last 30 days` : period}</span>
         </div>
       </div>
       {!hideInsights && <div className="insights">
@@ -336,6 +345,14 @@ function Gaps({ data, result, district }: { data: Data; result: DistrictResult; 
           </>
         );
       })()}
+      <h3 className="gaps-h">Known problems in the source data</h3>
+      <ul className="issues">
+        <li><b>Paused jobs still count as live.</b> 3,607 of 3,710 live postings across both programmes are marked paused (<code>pause_status = Y</code>), yet they still receive applications. Until someone confirms what paused means, every demand figure here may be too high.</li>
+        <li><b>Test postings are live.</b> 12 postings (197 openings) from employers named Test, Test Company, Test Organization, Abcd and Xyz, mostly placed in Hubballi City, are counted in the totals. They are left out of the employer lists only.</li>
+        <li><b>Most postings name no role.</b> 2,062 of 3,710 live postings across both programmes (56%) have no job role. Most of those also have no usable location, so on this map the share is lower (see Summary), but they are demand nobody can match. Making role required when posting a job fixes this at the source.</li>
+        <li><b>Employer names are typed freely.</b> The same company appears under several spellings (Quess Corp four ways, VRL four ways); the employer lists merge the obvious ones.</li>
+      </ul>
+      <p className="small muted">Checked against the database on 4 Nov 2026.</p>
     </>
   );
 }

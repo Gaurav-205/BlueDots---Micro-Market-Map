@@ -168,7 +168,7 @@ b, strong { font-weight: 700; }
 .caveat { margin: 12px 0 0; padding: 10px 14px; border-radius: var(--r-lg); background: var(--attention-soft); color: var(--attention-text); font-size: 14px; letter-spacing: -0.14px; line-height: 1.43; }
 .tabs { padding: 16px 24px 0; position: sticky; top: 0; background: var(--canvas); z-index: 1; }
 .tabs .seg { display: flex; }
-.tabs .seg button { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.tabs .seg button { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; padding-left: 10px; padding-right: 10px; }
 .tabbody { flex: 1; }
 .link { border: 0; background: none; color: var(--primary-deep); font: inherit; font-size: 16px; font-weight: 700; padding: 0; margin-bottom: 12px; cursor: pointer; }
 
@@ -189,9 +189,6 @@ b, strong { font-weight: 700; }
 .cmp-track i { display: block; height: 100%; border-radius: var(--r-full); }
 .cmp-foot { font-size: 12.5px; color: var(--steel); }
 .roles h3, .apps h3 { font-size: 18px; font-weight: 700; line-height: 1.44; color: var(--ink-deep); margin: 24px 0 8px; }
-.rolechips { display: flex; flex-wrap: wrap; gap: 6px; }
-.rolechips span { background: var(--surface-soft); border-radius: var(--r-full); padding: 6px 14px; font-size: 14px; letter-spacing: -0.14px; }
-.rolechips b { color: var(--primary-deep); margin-left: 2px; }
 .flowlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .flowlist li { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-size: 14px; letter-spacing: -0.14px; }
 .flowlist li i { grid-column: 1 / -1; display: block; height: 6px; border-radius: var(--r-full); background: var(--primary); }
@@ -203,6 +200,19 @@ b, strong { font-weight: 700; }
 .rolechip .link { margin: 0; font-size: 13px; }
 tbody tr.group td { font-size: 12px; font-weight: 600; color: var(--steel); padding-top: 16px; cursor: default; }
 .skills td:first-child { min-width: 150px; }
+/* Summary: findings grouped by the question they answer. */
+.summary section { margin-bottom: 18px; }
+.summary h3 { font-size: 15px; font-weight: 700; color: var(--ink-deep); margin: 0 0 8px; }
+.finding { border-left: 3px solid var(--hairline); padding: 2px 0 2px 12px; margin-bottom: 10px; }
+.finding.good { border-left-color: var(--hot); }
+.finding.bad { border-left-color: var(--pocket); }
+.finding p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--charcoal); }
+.finding b { color: var(--ink-deep); }
+.finding .link { font-size: 13px; margin: 4px 0 0; }
+.pair small { display: block; font-size: 12px; color: var(--steel); margin-top: 2px; }
+.gaps-h { font-size: 15px; font-weight: 700; color: var(--ink-deep); margin: 8px 0 8px; }
+.issues { margin: 0 0 8px; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; color: var(--charcoal); line-height: 1.5; }
+.issues code { font-size: 12px; background: var(--surface-soft); padding: 1px 4px; border-radius: 4px; }
 .tsub { font-size: 12px; color: var(--steel); padding-left: 14px; font-weight: 400; }
 tbody tr.static { cursor: default; }
 tbody tr.static td:first-child { font-weight: 600; color: var(--ink-deep); }

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { ageSuffix, callLabel, fmt1, fmtInt, showPileWarning } from "./lib/logic";
-import type { Call, DistrictResult, MarketResult, RoleRow, View } from "./lib/logic";
+import { ageSuffix, callLabel, demandField, fmt1, fmtInt, showPileWarning } from "./lib/logic";
+import type { Call, DistrictResult, MarketResult, View } from "./lib/logic";
 import { flowsFor } from "./lib/flows";
 import type { FlowRow, MarketFlows } from "./lib/flows";
 import type { EmployerRow } from "./lib/families";
@@ -12,17 +12,17 @@ interface Props {
   market: MarketResult | null;
   result: DistrictResult;
   view: View;
-  roles: RoleRow[] | null;
   flows: FlowRow[] | null;
   skills: ReactNode; // role-family table for this market, built by App
   employers: EmployerRow[] | null;
 }
 
-export default function Panel({ market: m, result, view, roles, flows, skills, employers }: Props) {
+export default function Panel({ market: m, result, view, flows, skills, employers }: Props) {
   if (!m) {
     return <p className="muted" style={{ margin: 0 }}>Pick a zone on the map or a row in the list to see that market's numbers.</p>;
   }
-  const myRoles = (roles ?? []).filter((r) => r.market_id === m.market_id).sort((a, b) => a.role_rank - b.role_rank);
+  // A hotspot built on old postings is not a hotspot: show how much of the demand is recent.
+  const fresh = m[demandField(view.measure, "30d")] || 0;
   return (
     <div>
       <div className="phead">
@@ -32,7 +32,10 @@ export default function Panel({ market: m, result, view, roles, flows, skills, e
       {m.localities && <div className="small muted">{m.localities}</div>}
       <div className="pair">
         <div><span>Seekers</span><b>{fmtInt(m.seekers)}</b></div>
-        <div><span>{view.measure === "openings" ? "Openings" : "Postings"}{ageSuffix(view.age)}</span><b>{fmtInt(m.demand)}</b></div>
+        <div>
+          <span>{view.measure === "openings" ? "Openings" : "Postings"}{ageSuffix(view.age)}</span><b>{fmtInt(m.demand)}</b>
+          {view.age === "all" && <small>{fresh ? `${fmtInt(fresh)} added in the last 30 days` : "none added in the last 30 days"}</small>}
+        </div>
       </div>
       <Compare m={m} district={result.rate} />
       {showPileWarning(m) && (
@@ -44,16 +47,6 @@ export default function Panel({ market: m, result, view, roles, flows, skills, e
         <div className="roles">
           <h3>Kinds of work here</h3>
           {skills}
-        </div>
-      )}
-      {roles && (
-        <div className="roles">
-          <h3>Top roles</h3>
-          {myRoles.length ? (
-            <div className="rolechips">{myRoles.map((r) => <span key={r.role_rank}>{r.job_role} <b>{fmtInt(r.postings)}</b></span>)}</div>
-          ) : (
-            <p className="muted small" style={{ margin: 0 }}>None of the postings here name a role.</p>
-          )}
         </div>
       )}
       {employers && <Employers rows={employers.filter((e) => e.market_id === m.market_id)} />}
