@@ -2,40 +2,39 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { APIProvider, Map as GMap, useMap } from "@vis.gl/react-google-maps";
 import type { Feature, MultiPolygon, Polygon } from "geojson";
-import * as turf from "@turf/turf";
-import { callLabel, fmt1, fmtInt, unitWord } from "./lib/logic";
+import { fmtInt } from "./lib/logic";
+import { JOB, SEEKER } from "./lib/colours";
 import type { DistrictResult, View } from "./lib/logic";
 import type { Data } from "./lib/useData";
-import { zonesFor } from "./lib/zones";
 import { flowsFor } from "./lib/flows";
-import { callColour } from "./Panel";
-import { zoneColour } from "./lib/colours";
 
 const KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.GOOGLE_MAPS_API_KEY) as string | undefined;
 
 
-// Quiet light basemap so the zones carry the colour, but with roads and town names so people can find their way.
-// Labels are English only (language="en" on APIProvider) to avoid the doubled Hindi/English names.
-// Works only without a map ID, so markers are drawn in an OverlayView.
+// The normal Google map (as in KYD), with shop and transit icons hidden so the market cards stand out.
+// Labels are English (language="en" on APIProvider). Works without a map ID, so cards are drawn in an OverlayView.
 const STYLE: google.maps.MapTypeStyle[] = [
-  // Warm paper ground so red and green zones read clearly; roads in soft sand, water in pale blue.
-  { elementType: "geometry", stylers: [{ color: "#f6f4ef" }] },
-  { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#a39c90" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#fbfaf7" }, { weight: 3 }] },
   { featureType: "poi", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
-  { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
-  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#8a8378" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#e2dccf" }] },
-  { featureType: "road.local", elementType: "geometry", stylers: [{ color: "#ece7dd" }] },
-  { featureType: "road.arterial", elementType: "labels", stylers: [{ visibility: "off" }] },
-  { featureType: "road.local", elementType: "labels", stylers: [{ visibility: "off" }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#d3c7b0" }] },
-  { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#78716c" }] },
-  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#eef0e5" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#cfe1ec" }] },
 ];
+
+// Card size in px and the spots tried around a market's point, nearest first (KYD's placeCards).
+const CARD = { w: 170, h: 40 };
+// KYD tried 9 spots; central Hubli-Dharwad packs several markets within a few px, so try a 5 x 7 grid, nearest first.
+const SPOTS: [number, number][] = [-260, -130, 0, 130, 260]
+  .flatMap((dx) => [-138, -92, -46, 0, 46, 92, 138].map((dy): [number, number] => [dx, dy]))
+  .sort((a, b) => Math.hypot(a[0] / 1.6, a[1]) - Math.hypot(b[0] / 1.6, b[1]));
+const CARD_LIFT = 40; // cards sit this far above their point, joined to a pin by a short line
+function placeCards(points: { id: string; x: number; y: number }[]): Map<string, [number, number]> {
+  const boxes: { x: number; y: number }[] = [];
+  const out = new Map<string, [number, number]>();
+  for (const p of points) {
+    const free = SPOTS.find(([dx, dy]) => boxes.every((b) => Math.abs(b.x - (p.x + dx)) >= CARD.w || Math.abs(b.y - (p.y + dy)) >= CARD.h)) ?? SPOTS[0];
+    boxes.push({ x: p.x + free[0], y: p.y + free[1] });
+    out.set(p.id, free);
+  }
+  return out;
+}
 
 const FLOW = "#334155";
 
@@ -63,8 +62,6 @@ interface Props {
   pins: boolean;
   onSelect: (id: string) => void;
 }
-
-interface Hover { id: string; x: number; y: number }
 
 export default function MapView(props: Props) {
   const [type, setType] = useState<"roadmap" | "hybrid">("roadmap");
@@ -120,13 +117,8 @@ function useOverlay(map: google.maps.Map | null) {
 function Layers({ data, result, view, selected, pins, onSelect }: Props) {
   const map = useMap();
   const ov = useOverlay(map);
-  const [hover, setHover] = useState<Hover | null>(null);
   const outline = data.outlines!.features.find((f) => f.properties.district === view.district);
-  const zones = useMemo(() => zonesFor(view.district, data.centres!, data.outlines!), [view.district, data.centres, data.outlines]);
   const byId = useMemo(() => new Map(result.markets.map((m) => [m.market_id, m])), [result]);
-  const polys = useRef(new Map<string, google.maps.Polygon>());
-  const sel = useRef(selected);
-  sel.current = selected;
   const select = useRef(onSelect);
   select.current = onSelect;
 
@@ -152,47 +144,15 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     return () => ro.disconnect();
   }, [map, outline]);
 
-  // Outline and zones are drawn imperatively; react-google-maps has no polygon component.
+  // Thin district outline for orientation, and a click on the map (not a card) clears the selection.
   useEffect(() => {
     if (!map || !outline) return;
-    const shapes: google.maps.Polygon[] = [];
-    // Fade everything outside the district so the eye stays inside it: a big box with the district cut out.
-    const [w, so, e, n] = turf.bbox(outline);
-    const pad = 3;
-    const frame = [{ lat: n + pad, lng: w - pad }, { lat: n + pad, lng: e + pad }, { lat: so - pad, lng: e + pad }, { lat: so - pad, lng: w - pad }];
-    // A hole only cuts out if it winds opposite to the frame (frame is clockwise, so holes must be counter-clockwise).
-    const ccw = (r: LL[]) => r.reduce((a, p, i) => { const q = r[(i + 1) % r.length]; return a + (p.lng * q.lat - q.lng * p.lat); }, 0) > 0;
-    const holes = (outline.geometry.type === "Polygon" ? [outline.geometry.coordinates] : outline.geometry.coordinates)
-      .map((poly) => poly[0].map(([lng, lat]) => ({ lat, lng })))
-      .map((r) => (ccw(r) ? r : r.reverse()));
-    shapes.push(new google.maps.Polygon({
-      map, paths: [frame, ...holes], clickable: false, strokeOpacity: 0, fillColor: "#FFFFFF", fillOpacity: 0.55, zIndex: 0,
-    }));
-    shapes.push(new google.maps.Polygon({
-      map, paths: toPaths(outline), clickable: false,
-      strokeColor: "#0A1317", strokeOpacity: 0.85, strokeWeight: 2, fillColor: "#0A1317", fillOpacity: 0.07, zIndex: 0,
-    }));
-    const box = map.getDiv();
-    for (const z of zones) {
-      const id = z.properties.market_id;
-      const p = new google.maps.Polygon({ map, paths: toPaths(z), zIndex: 1 });
-      const at = (e: google.maps.MapMouseEvent) => {
-        const ev = e.domEvent as MouseEvent, r = box.getBoundingClientRect();
-        setHover({ id, x: ev.clientX - r.left, y: ev.clientY - r.top });
-      };
-      p.addListener("click", () => select.current(id === sel.current ? "" : id));
-      p.addListener("mousemove", at);
-      p.addListener("mouseout", () => setHover(null));
-      polys.current.set(id, p);
-      shapes.push(p);
-    }
+    const line = new google.maps.Polygon({
+      map, paths: toPaths(outline), clickable: false, strokeColor: "#0A1317", strokeOpacity: 0.5, strokeWeight: 1.5, fillOpacity: 0, zIndex: 0,
+    });
     const clear = map.addListener("click", () => select.current(""));
-    return () => {
-      shapes.forEach((s) => s.setMap(null));
-      polys.current.clear();
-      clear.remove();
-    };
-  }, [map, outline, zones]);
+    return () => { line.setMap(null); clear.remove(); };
+  }, [map, outline]);
 
   // Curved lines from the selected market to where its seekers applied, width by number of applications.
   useEffect(() => {
@@ -206,51 +166,19 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
     return () => lines.forEach((x) => x.setMap(null));
   }, [map, links]);
 
-  // Restyle zones when the view or selection changes.
-  useEffect(() => {
-    polys.current.forEach((p, id) => {
-      const m = byId.get(id);
-      if (!m) return;
-      const on = id === selected;
-      // Flat classed fills with thin white borders between neighbours, like a printed thematic map.
-      const faded = !!selected && !on;
-      p.setOptions({
-        fillColor: zoneColour(m),
-        // Nearly opaque so the base map's own town names don't show through and collide with the market labels.
-        fillOpacity: faded ? 0.78 : 0.9,
-        strokeColor: on ? "#0A1317" : "#FFFFFF",
-        strokeOpacity: 1,
-        strokeWeight: on ? 2 : 1,
-        zIndex: on ? 2 : 1,
-      });
-    });
-  }, [byId, selected, zones]);
-
   const markets = result.markets.filter((m) => !m.isRest && m.lat != null);
   const cells = pins && data.cells ? data.cells.filter((c) => c.district === view.district) : [];
   const pinField = view.age === "recent" ? "postings_recent" : view.age === "30d" ? "postings_30d" : "postings";
   const peakS = Math.max(1, ...cells.map((c) => c.seekers));
   const peakP = Math.max(1, ...cells.map((c) => c[pinField]));
-  const h = hover && byId.get(hover.id);
-  const box = map?.getDiv();
-  const w = box?.clientWidth ?? 600, hh = box?.clientHeight ?? 600;
   const selName = selected ? byId.get(selected)?.market : undefined;
 
-  // Each market is a plain text label: its rate, and its name when that doesn't collide with one already placed (selected and biggest first).
+  // One card per market (name, seekers, jobs), biggest first; each takes the nearest spot that doesn't cover another card.
   const placed = ov ? (() => {
-    const px = (lat: number, lng: number) => ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(lat, lng))!;
-    const order = [...markets].sort((a, b) => (b.market_id === selected ? 1 : 0) - (a.market_id === selected ? 1 : 0) || b.seekers - a.seekers);
-    const taken: [number, number, number, number][] = [];
-    const hit = (r: [number, number, number, number]) => taken.some((t) => r[0] < t[2] && r[2] > t[0] && r[1] < t[3] && r[3] > t[1]);
-    return order.map((m) => {
-      const p = px(m.lat!, m.lng!);
-      taken.push([p.x - 18, p.y - 10, p.x + 18, p.y + 10]);
-      const lw = m.market.length * 6.6 + 8;
-      const label: [number, number, number, number] = [p.x - lw / 2, p.y + 10, p.x + lw / 2, p.y + 26];
-      const named = m.market_id === selected || !hit(label);
-      if (named) taken.push(label);
-      return { m, x: p.x, y: p.y, named };
-    });
+    const order = [...markets].sort((a, b) => (b.market_id === selected ? 1 : 0) - (a.market_id === selected ? 1 : 0) || b.seekers + b.demand - (a.seekers + a.demand));
+    const pts = order.map((m) => ({ m, ...ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(m.lat!, m.lng!))! }));
+    const off = placeCards(pts.map((p) => ({ id: p.m.market_id, x: p.x, y: p.y })));
+    return pts.map((p) => ({ ...p, d: off.get(p.m.market_id)! }));
   })() : [];
 
   return (
@@ -276,33 +204,25 @@ function Layers({ data, result, view, selected, pins, onSelect }: Props) {
             const p = ov.proj.fromLatLngToDivPixel(new google.maps.LatLng(at.lat, at.lng))!;
             return <div key={`f${l.id}`} className="flowtag" style={{ left: p.x, top: p.y }}>{fmtInt(l.n)}</div>;
           })}
-          {placed.map(({ m, x, y, named }) => {
+          {placed.map(({ m, x, y, d: [dx, dy] }) => {
             const on = m.market_id === selected;
             return (
-              <button key={m.market_id} type="button" title={m.market}
-                className={`mk${on ? " on" : ""}${selected && !on ? " dim" : ""}`}
-                style={{ left: x, top: y, zIndex: on ? 1000 : 100 + Math.round(m.seekers / 100) }}
-                onClick={(e) => { e.stopPropagation(); onSelect(on ? "" : m.market_id); }}
-                onMouseEnter={(e) => { const r = box!.getBoundingClientRect(); setHover({ id: m.market_id, x: e.clientX - r.left, y: e.clientY - r.top }); }}
-                onMouseLeave={() => setHover(null)}>
-                <span className={`mk-rate${m.call === "Thin data" ? " thin" : ""}`}>{fmt1(m.rate)}</span>
-                {named && <span className="mk-name">{m.market}</span>}
-              </button>
+              <div key={m.market_id} className={`area${selected && !on ? " dim" : ""}`} style={{ left: x, top: y, zIndex: on ? 1000 : 100 }}>
+                <svg className="area-leader" width="1" height="1" aria-hidden><line x1="0" y1="0" x2={dx} y2={dy - CARD_LIFT} /></svg>
+                <span className="area-pin" />
+                <button type="button" className={`area-chip${on ? " on" : ""}`} style={{ translate: `${dx}px ${dy - CARD_LIFT}px` }}
+                  onClick={(e) => { e.stopPropagation(); onSelect(on ? "" : m.market_id); }}>
+                  <b>{m.market.replace(" and ", " & ")}</b>
+                  <span>
+                    <i style={{ background: SEEKER }} />{fmtInt(m.seekers)}<span className="sr-only"> seekers,</span>
+                    <i style={{ background: JOB }} />{fmtInt(m.demand)}<span className="sr-only"> {view.measure === "openings" ? "openings" : "postings"}</span>
+                  </span>
+                </button>
+              </div>
             );
           })}
         </>,
         ov.el,
-      )}
-      {h && (
-        <div className="tip" style={{ left: Math.min(Math.max(hover!.x + 14, 4), w - 214), top: Math.min(Math.max(hover!.y + 14, 4), hh - 120) }}>
-          <div className="tip-name">{h.market}</div>
-          <div className="tip-call"><span className="cdot" style={{ background: callColour(h.call) }} />{callLabel(h.call)}</div>
-          <div className="tip-grid">
-            <span>Seekers</span><b>{fmtInt(h.seekers)}</b>
-            <span>{unitWord(view).replace(/^./, (c) => c.toUpperCase())}</span><b>{fmtInt(h.demand)}</b>
-            <span>Per 100 seekers</span><b>{fmt1(h.rate)}</b>
-          </div>
-        </div>
       )}
     </>
   );

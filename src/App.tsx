@@ -9,7 +9,7 @@ import MapView from "./MapView";
 import Panel, { callColour } from "./Panel";
 import Skills from "./Skills";
 import Summary from "./Summary";
-import { STEPS, THIN } from "./lib/colours";
+import { JOB, SEEKER } from "./lib/colours";
 
 type Tab = "summary" | "market" | "ranking" | "skills";
 
@@ -115,18 +115,15 @@ export default function App() {
           ) : mapStatus === "loading" ? <div className="state"><span className="skel" style={{ width: 160 }} /></div>
             : mapStatus === "error" ? <Failed /> : <div className="state">No markets for this district</div>}
           {!noDemand && <div className="legend">
-            <div className="legend-title">{uv.measure === "openings" ? "Openings" : "Postings"} per 100 seekers, against the district</div>
             {role && (
               <div className="legend-row rolechip">
                 <span>Only <b>{role}</b></span>
                 <button type="button" className="link" onClick={() => setView({ role: "" })}>All roles</button>
               </div>
             )}
-            <div className="legend-row steps" role="list" aria-label="Times the district rate">
-              {STEPS.map((st) => <i key={st.label} role="listitem" title={st.label} style={{ background: st.colour }} />)}
-            </div>
-            <div className="legend-row legend-ends"><span>More seekers</span><span>Average</span><span>More jobs</span></div>
-            <div className="legend-row legend-thin"><i style={{ background: THIN }} />Under 30 seekers, too few to judge</div>
+            <div className="legend-row"><i className="sw" style={{ background: SEEKER }} />Seekers in the market</div>
+            <div className="legend-row"><i className="sw" style={{ background: JOB }} />{uv.measure === "openings" ? "Openings" : "Job postings"} in the market</div>
+            <div className="legend-note">Each card is one micro-market. Click one for details.</div>
             {cellsOk && !role && (
               <label className="legend-row check">
                 <input type="checkbox" checked={uv.pins} onChange={(e) => setView({ pins: e.target.checked })} />

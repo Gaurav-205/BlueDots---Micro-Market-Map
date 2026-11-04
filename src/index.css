@@ -91,10 +91,6 @@ b, strong { font-weight: 700; }
 .legend-title { font-weight: 700; color: var(--ink-deep); }
 .legend-row { display: flex; align-items: center; gap: 8px; }
 .legend-ends { justify-content: space-between; color: var(--steel); font-size: 12px; letter-spacing: 0; margin-top: -4px; }
-.legend .steps { gap: 0; }
-.legend .steps i { flex: 1; height: 12px; }
-.legend-thin { font-size: 12px; color: var(--steel); }
-.legend-thin i { width: 12px; height: 12px; border: 1px solid var(--hairline); flex: none; }
 .check { cursor: pointer; }
 .check input { margin: 0; width: 16px; height: 16px; accent-color: var(--fb-blue); }
 @media (max-width: 960px) { .legend { width: 200px; bottom: 16px; padding: 12px; } .flowcap { max-width: calc(100% - 24px); top: 64px; } }
@@ -105,24 +101,23 @@ b, strong { font-weight: 700; }
 .flowtag { position: absolute; transform: translate(-50%, -50%); background: #fff; border: 1px solid #334155; border-radius: 4px; color: #334155; font-size: 12px; font-weight: 700; line-height: 1; padding: 3px 5px; white-space: nowrap; pointer-events: none; z-index: 900; }
 
 /* Market bubbles */
-.mk { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; border: 0; padding: 0; background: none; font: inherit; cursor: pointer; }
-/* Map labels: plain text with a thin white halo, as on a printed map. */
-.mk { --halo: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 3px #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff; }
-.mk-rate { font-size: 16px; font-weight: 800; line-height: 1; color: var(--ink-deep); text-shadow: var(--halo); }
-.mk-rate.thin { color: var(--steel); font-weight: 500; }
-.mk-name { position: absolute; top: 100%; margin-top: 2px; font-size: 13px; font-weight: 700; color: var(--ink-deep); white-space: nowrap; text-shadow: var(--halo); }
-.mk:hover .mk-name, .mk:hover .mk-rate { text-decoration: underline; }
-.mk.on .mk-rate { font-size: 17px; }
-.mk.on .mk-name { color: var(--ink-deep); font-weight: 700; }
-.mk.dim { opacity: 0.45; }
+/* Market cards (KYD style): a card per market, a pin on its exact point, and a thin line joining them. */
+.area { position: absolute; width: 0; height: 0; }
+.area.dim { opacity: 0.55; }
+.area-pin { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--ink-deep); border: 2px solid #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 0.3); pointer-events: none; }
+.area-leader { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.area-leader line { stroke: var(--ink-deep); stroke-width: 1.5; stroke-opacity: 0.6; }
+.area-chip { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); white-space: nowrap; display: grid; gap: 2px; padding: 6px 10px; border-radius: 10px; background: #fff; border: 1px solid var(--hairline-soft); box-shadow: 0 1px 3px rgb(0 0 0 / 0.15); color: var(--ink-deep); font: 12px/1.3 inherit; text-align: left; cursor: pointer; }
+.area-chip b { font-weight: 700; font-size: 12.5px; }
+.area-chip > span { display: flex; align-items: center; gap: 6px; color: var(--charcoal); font-variant-numeric: tabular-nums; font-weight: 600; }
+.area-chip i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.area-chip.on { outline: 2px solid #b97f00; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.legend .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.legend-note { font-size: 12px; color: var(--steel); }
 .pin-s, .pin-p { position: absolute; width: var(--d); height: var(--d); transform: translate(-50%, -50%); pointer-events: none; }
 .pin-s { border-radius: 50%; background: rgba(10, 19, 23, 0.16); }
 .pin-p { background: rgba(26, 152, 80, 0.8); }
-.tip { position: absolute; z-index: 10; pointer-events: none; background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 10px 12px; font-size: 13px; width: 220px; line-height: 1.43; }
-.tip-name { font-weight: 700; font-size: 16px; color: var(--ink-deep); }
-.tip-call { display: flex; align-items: center; gap: 6px; color: var(--steel); margin-bottom: 6px; }
-.tip-grid { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; }
-.tip-grid span { color: var(--steel); }
 
 /* States */
 .state { display: flex; align-items: center; justify-content: center; gap: 6px; height: 100%; min-height: 60px; font-size: 14px; color: var(--steel); }
