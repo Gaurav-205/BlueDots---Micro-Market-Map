@@ -3,7 +3,7 @@ import Papa from "papaparse";
 import type { FeatureCollection, Polygon, MultiPolygon } from "geojson";
 import type { CellRow, CoverageRow, MarketRow, RoleRow } from "./logic";
 import type { FlowRow } from "./flows";
-import type { FamilyRow } from "./families";
+import type { EmployerRow, FamilyRow, PoolRow } from "./families";
 
 export type Status = "loading" | "ok" | "error" | "missing";
 
@@ -26,9 +26,11 @@ export interface Data {
   cells: CellRow[] | null;
   flows: FlowRow[] | null;
   families: FamilyRow[] | null;
+  pool: PoolRow[] | null;
+  employers: EmployerRow[] | null;
   centres: Centre[] | null;
   outlines: Outlines | null;
-  status: Record<"markets" | "roles" | "coverage" | "cells" | "flows" | "families" | "centres" | "outlines", Status>;
+  status: Record<"markets" | "roles" | "coverage" | "cells" | "flows" | "families" | "pool" | "employers" | "centres" | "outlines", Status>;
 }
 
 const NUM: Record<string, string[]> = {
@@ -38,6 +40,8 @@ const NUM: Record<string, string[]> = {
   cells: ["cell_lat", "cell_lng", "seekers", "postings", "postings_recent", "postings_30d"],
   flows: ["applications", "accepted", "applications_recent"],
   families: ["seekers", "postings", "postings_recent", "openings", "openings_recent", "postings_30d", "openings_30d"],
+  pool: ["jobs", "openings", "hard_jobs", "hard_openings", "seekers", "stranded_seekers"],
+  employers: ["postings", "openings", "postings_30d", "applications", "accepted", "employers_in_market"],
 };
 const KEEP: Record<string, string[]> = {
   markets: ["district", "market_id", "market", "localities", ...NUM.markets],
@@ -46,6 +50,8 @@ const KEEP: Record<string, string[]> = {
   cells: ["district", "market_id", ...NUM.cells],
   flows: ["district", "from_market", "to_market", ...NUM.flows],
   families: ["district", "market_id", "family", ...NUM.families],
+  pool: ["district", "market_id", "family", ...NUM.pool],
+  employers: ["district", "market_id", "employer", ...NUM.employers],
 };
 
 const base = `${import.meta.env.BASE_URL}data/`;
@@ -90,16 +96,18 @@ function loadAll(): Promise<Data> {
     wrap("cells", loadCsv<CellRow>("cells"), true),
     wrap("flows", loadCsv<FlowRow>("flows"), true),
     wrap("families", loadCsv<FamilyRow>("families"), true),
+    wrap("pool", loadCsv<PoolRow>("pool"), true),
+    wrap("employers", loadCsv<EmployerRow>("employers"), true),
     wrap("centres", fetchText("market_centres.json").then((t) => JSON.parse(t) as Centre[])),
     wrap("outlines", fetchText("district_outlines.geojson").then((t) => JSON.parse(t) as Outlines)),
-  ]).then(([markets, roles, coverage, cells, flows, families, centres, outlines]) => ({
-    markets, roles, coverage, cells, flows, families, centres, outlines, status,
+  ]).then(([markets, roles, coverage, cells, flows, families, pool, employers, centres, outlines]) => ({
+    markets, roles, coverage, cells, flows, families, pool, employers, centres, outlines, status,
   }));
 }
 
 const LOADING: Data = {
-  markets: null, roles: null, coverage: null, cells: null, flows: null, families: null, centres: null, outlines: null,
-  status: { markets: "loading", roles: "loading", coverage: "loading", cells: "loading", flows: "loading", families: "loading", centres: "loading", outlines: "loading" },
+  markets: null, roles: null, coverage: null, cells: null, flows: null, families: null, pool: null, employers: null, centres: null, outlines: null,
+  status: { markets: "loading", roles: "loading", coverage: "loading", cells: "loading", flows: "loading", families: "loading", pool: "loading", employers: "loading", centres: "loading", outlines: "loading" },
 };
 
 export function useData(): Data {

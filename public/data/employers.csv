@@ -1,0 +1,88 @@
+district,market_id,employer,postings,openings,postings_30d,applications,accepted,employers_in_market
+Ghaziabad,GZB-01,Quess Corporation Ltd.,4,200,0,16,0,80
+Ghaziabad,GZB-01,Ques Corp Company,3,150,0,80,0,80
+Ghaziabad,GZB-01,U Lite Apperal,8,110,0,74,0,80
+Ghaziabad,GZB-01,Tanu Enterprises,3,85,0,18,0,80
+Ghaziabad,GZB-01,Idigitalperneur Private Limited,1,50,0,7,0,80
+Ghaziabad,GZB-01,M/S Decency Facilities Management Private Limited,1,50,0,0,0,80
+Ghaziabad,GZB-02,Quess Corp Ltd.,1,50,0,40,0,9
+Ghaziabad,GZB-02,Global Chemicals,10,21,0,71,0,9
+Ghaziabad,GZB-02,Kalco Alu Systems Pvt Ltd,1,10,0,22,0,9
+Ghaziabad,GZB-02,Fk Engineers,3,6,3,0,0,9
+Ghaziabad,GZB-02,Nitsui India Private Limited,1,5,0,9,0,9
+Ghaziabad,GZB-02,Pasondia Cables Pvt Ltd,1,4,1,0,0,9
+Ghaziabad,GZB-03,Soham Packaging (P) Ltd,1,20,0,0,0,22
+Ghaziabad,GZB-03,Mcdonald's,1,10,0,10,0,22
+Ghaziabad,GZB-03,Progressive Tool & Comp.(P) Ltd.,1,10,0,0,0,22
+Ghaziabad,GZB-03,Laxmi Machine Tools,1,5,0,2,0,22
+Ghaziabad,GZB-03,Telmax Engineers,1,5,0,1,0,22
+Ghaziabad,GZB-03,Thermodyne Engineering Systems,1,5,0,7,0,22
+Ghaziabad,GZB-04,M/S Skr Workforce Private Limited,1,50,0,0,0,15
+Ghaziabad,GZB-04,Spectrum Talent Management,1,50,0,1,0,15
+Ghaziabad,GZB-04,Mcdonald's,3,34,0,20,0,15
+Ghaziabad,GZB-04,Adecco India Ltd,1,20,0,7,0,15
+Ghaziabad,GZB-04,M/S S S Enterprises,1,20,0,0,0,15
+Ghaziabad,GZB-04,Burger King,1,10,0,13,0,15
+Ghaziabad,GZB-05,Hind Rectifiers Ltd,3,36,0,0,0,21
+Ghaziabad,GZB-05,Bharat Electronics Ltd (Bel),1,30,0,0,0,21
+Ghaziabad,GZB-05,Nav Jyoti Metals,8,28,0,56,0,21
+Ghaziabad,GZB-05,Pistons And Export House,1,25,1,0,0,21
+Ghaziabad,GZB-05,Cura Ayurvedic And Unani Limited,3,23,0,44,0,21
+Ghaziabad,GZB-05,Teamlease Searvis Limited,1,20,0,2,0,21
+Ghaziabad,GZB-06,Adecco India Pvt. Ltd,22,1100,0,97,0,11
+Ghaziabad,GZB-06,Patel & Company,2,100,0,15,0,11
+Ghaziabad,GZB-06,N D Securitas Private Limited,1,50,0,6,3,11
+Ghaziabad,GZB-06,Burgerking,1,10,0,6,0,11
+Ghaziabad,GZB-06,Mcdonald's,1,10,0,10,0,11
+Ghaziabad,GZB-06,Aakarsh Aneja,1,7,0,6,0,11
+Ghaziabad,GZB-07,Tanish Plastics,2,20,0,5,0,22
+Ghaziabad,GZB-07,Shree Krishna Industrie,10,18,0,26,0,22
+Ghaziabad,GZB-07,Rishabh Thread Company,2,12,0,20,0,22
+Ghaziabad,GZB-07,Vishvakarma Auto Pipes,2,6,0,2,0,22
+Ghaziabad,GZB-07,Bag And Baggage,1,5,0,0,0,22
+Ghaziabad,GZB-07,M/S Adolf7 Automotive Industries Private Limited,1,5,0,0,0,22
+Ghaziabad,GZB-08,Bottmac India Private Limited,6,46,0,10,0,9
+Ghaziabad,GZB-08,Kech Incorporation,1,25,0,29,0,9
+Ghaziabad,GZB-08,Arhan Enterprises,1,15,1,0,0,9
+Ghaziabad,GZB-08,Sankalp Semiconductor,1,10,0,6,0,9
+Ghaziabad,GZB-08,Vk Tread India Ltd,1,10,0,2,0,9
+Ghaziabad,GZB-08,Goyal Traders,1,3,0,2,0,9
+Ghaziabad,GZB-10,Kalco Alu Systems Pvt Ltd,12,153,0,76,0,2
+Ghaziabad,GZB-10,Ekart Logistics,1,40,0,6,0,2
+Ghaziabad,GZB-REST,Toshi Automation Solutions Limited,1,10,0,7,0,2
+Ghaziabad,GZB-REST,Nordstern Rubber & Rolls Pvt Ltd,1,1,0,1,0,2
+Hubli-Dharwad,HDW-01,Suvidha Industries,4,200,0,0,0,519
+Hubli-Dharwad,HDW-01,Gtc Hubbali,2,100,0,18,0,519
+Hubli-Dharwad,HDW-01,Aequs Limited,2,60,0,73,36,519
+Hubli-Dharwad,HDW-01,Vrl Limited,3,56,0,17,0,519
+Hubli-Dharwad,HDW-01,Company Name,3,52,0,0,0,519
+Hubli-Dharwad,HDW-01,Acul Limited,1,50,0,0,0,519
+Hubli-Dharwad,HDW-02,Essae Gears And Transmissions,3,48,0,29,0,56
+Hubli-Dharwad,HDW-02,Dafson's Healthcare Solutions Private Limited,2,31,0,11,0,56
+Hubli-Dharwad,HDW-02,Sangam Fasteners Pvt.ltd,1,30,0,13,5,56
+Hubli-Dharwad,HDW-02,Hdb Financial Services Ltd And Bharat Financial Inclusion Limited And,1,25,0,43,0,56
+Hubli-Dharwad,HDW-02,Sampda Industries,1,25,0,2,0,56
+Hubli-Dharwad,HDW-02,Balaji Enterprises,1,20,0,2,0,56
+Hubli-Dharwad,HDW-03,Irc Industrial Resources Centre Pvt Ltd,3,150,0,29,11,36
+Hubli-Dharwad,HDW-03,Connect (Authorized Sourcing Partners For Aequs),1,50,0,17,0,36
+Hubli-Dharwad,HDW-03,Skytech Dies And Moulds Pvt Ltd,1,20,0,0,0,36
+Hubli-Dharwad,HDW-03,W B Agro Product Pvt Ltd,1,20,0,6,0,36
+Hubli-Dharwad,HDW-03,Srv Confil Systems,2,16,0,11,1,36
+Hubli-Dharwad,HDW-03,Shodha Motors Private Limited,2,12,0,3,0,36
+Hubli-Dharwad,HDW-04,Airtech (Lcc Groups Dharwad),1,50,0,21,0,52
+Hubli-Dharwad,HDW-04,Bank Job,1,50,0,1,0,52
+Hubli-Dharwad,HDW-04,Hain Na Anand India Private,1,50,0,0,0,52
+Hubli-Dharwad,HDW-04,Joy Alocas India Limited,1,50,0,0,0,52
+Hubli-Dharwad,HDW-04,Suri Auto Products,3,46,0,29,2,52
+Hubli-Dharwad,HDW-04,Skytech Dies And Moulds Pvt.ltd,3,24,0,6,0,52
+Hubli-Dharwad,HDW-05,Yashaswi Academy For Skills ( Tata Marcopolo Motors Ltd ),6,300,0,118,111,80
+Hubli-Dharwad,HDW-05,Quess Corp Limited,3,150,0,7,2,80
+Hubli-Dharwad,HDW-05,Tata Motors Dharwad,1,50,0,15,11,80
+Hubli-Dharwad,HDW-05,Shakunt Enterprises Pvt Ltd,1,25,0,3,0,80
+Hubli-Dharwad,HDW-05,Bhagyavanti Engineering Works,1,20,0,0,0,80
+Hubli-Dharwad,HDW-05,Technoon Technology Private Limited,1,20,0,0,0,80
+Hubli-Dharwad,HDW-08,Nagarh,1,1,0,33,0,1
+Hubli-Dharwad,HDW-REST,V R L Limited,7,195,0,104,0,4
+Hubli-Dharwad,HDW-REST,Vrls Limited,1,50,0,16,1,4
+Hubli-Dharwad,HDW-REST,Ishwar Petroleums,1,1,0,0,0,4
+Hubli-Dharwad,HDW-REST,Technymon Technology India Private Limited,1,1,0,2,0,4

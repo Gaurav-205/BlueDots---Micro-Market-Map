@@ -100,6 +100,23 @@ Each seeker or job is in exactly one family: the first rule in `sql/families.sql
 
 The Role filter recomputes every view with one family's counts in place of the market totals (same formulas). The Skills tab compares each family's rate with the all-roles district rate, using the same thresholds as the market calls.
 
+### pool.csv: matching pool per market and role family (from `sql/pool.sql`, added 2026-11-04)
+
+Only role families that are a kind of work. Same snapshot as families.csv, so `jobs` and `seekers` equal its `postings` and `seekers`.
+
+| Column | Meaning |
+|---|---|
+| jobs, openings | Live postings of this family placed in the market |
+| hard_jobs, hard_openings | Of those, postings with fewer than 5 seekers of the same family within 10 km |
+| seekers | Seekers of this family placed in the market |
+| stranded_seekers | Of those, seekers with no posting of the same family within 10 km |
+
+### employers.csv: top 6 employers per market (from `sql/employers.sql`, added 2026-11-04)
+
+District, market_id, employer, postings, openings, postings_30d, applications, accepted, employers_in_market. Spellings are merged on a normalised key; test postings and postings without an employer name are left out.
+
+Match score v2 (used for call lists, not shown on the map): see `match_score.md`.
+
 ### market_centres.json
 
 The same centres as markets.csv, as JSON. Use it as the single source for centre positions and radius. Fields: market_id, district, market, localities, lat, lng, radius_km.

@@ -48,3 +48,29 @@ export function familyTotals(families: FamilyRow[], view: View, marketId?: strin
   }
   return [...acc.values()].map((t) => ({ ...t, rate: t.seekers ? (100 * t.demand) / t.seekers : 0 }));
 }
+
+// Matching pool per market and family, from pool.csv (docs/sql/pool.sql). Only families that are a kind of work.
+export interface PoolRow {
+  district: string;
+  market_id: string;
+  family: string;
+  jobs: number;
+  openings: number;
+  hard_jobs: number; // fewer than 5 seekers of this family within 10 km
+  hard_openings: number;
+  seekers: number;
+  stranded_seekers: number; // no job of this family within 10 km
+}
+
+// Top employers per market, from employers.csv (docs/sql/employers.sql).
+export interface EmployerRow {
+  district: string;
+  market_id: string;
+  employer: string;
+  postings: number;
+  openings: number;
+  postings_30d: number;
+  applications: number;
+  accepted: number;
+  employers_in_market: number;
+}

@@ -3,6 +3,7 @@ import { ageSuffix, callLabel, fmt1, fmtInt, showPileWarning } from "./lib/logic
 import type { Call, DistrictResult, MarketResult, RoleRow, View } from "./lib/logic";
 import { flowsFor } from "./lib/flows";
 import type { FlowRow, MarketFlows } from "./lib/flows";
+import type { EmployerRow } from "./lib/families";
 
 export const callColour = (c: Call) =>
   c === "Demand hotspot" ? "#1A9850" : c === "Supply pocket" ? "#D73027" : "#8595A4";
@@ -14,9 +15,10 @@ interface Props {
   roles: RoleRow[] | null;
   flows: FlowRow[] | null;
   skills: ReactNode; // role-family table for this market, built by App
+  employers: EmployerRow[] | null;
 }
 
-export default function Panel({ market: m, result, view, roles, flows, skills }: Props) {
+export default function Panel({ market: m, result, view, roles, flows, skills, employers }: Props) {
   if (!m) {
     return <p className="muted" style={{ margin: 0 }}>Pick a zone on the map or a row in the list to see that market's numbers.</p>;
   }
@@ -54,6 +56,7 @@ export default function Panel({ market: m, result, view, roles, flows, skills }:
           )}
         </div>
       )}
+      {employers && <Employers rows={employers.filter((e) => e.market_id === m.market_id)} />}
       {flows && <Applications flows={flows} m={m} result={result} />}
     </div>
   );
@@ -112,6 +115,29 @@ function Compare({ m, district }: { m: MarketResult; district: number }) {
       {row("This market", m.rate, callColour(m.call))}
       {row("District average", district, "#8595A4")}
       <div className="cmp-foot">{fmt1(m.index)}× the district average</div>
+    </div>
+  );
+}
+
+// Biggest employers here by openings, with how many applied and were accepted (test postings left out in SQL).
+function Employers({ rows }: { rows: EmployerRow[] }) {
+  if (!rows.length) return null;
+  return (
+    <div className="roles">
+      <h3>Biggest employers here</h3>
+      <div className="scroll">
+        <table>
+          <thead><tr><th>Employer</th><th>Openings</th><th>Applied</th><th>Accepted</th></tr></thead>
+          <tbody>
+            {rows.map((e) => (
+              <tr key={e.employer} className="static">
+                <td>{e.employer}</td><td>{fmtInt(e.openings)}</td><td>{fmtInt(e.applications)}</td><td>{fmtInt(e.accepted)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="small muted" style={{ margin: "4px 0 0" }}>{fmtInt(rows[0].employers_in_market)} employers have live postings in this market.</p>
     </div>
   );
 }

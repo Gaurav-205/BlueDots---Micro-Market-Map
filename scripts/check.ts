@@ -77,5 +77,22 @@ for (const m of markets) for (const k of ["seekers", "postings", "openings", "po
   const got = famSum.get(m.market_id)?.[k] ?? 0, want = m[k];
   if (Math.abs(got - want) > Math.max(5, want / 100)) eq(`${m.market_id} families ${k}`, String(got), `about ${want}`);
 }
+// Pool: same snapshot as families.csv, so its job and seeker counts per market and family must match exactly,
+// and stranded seekers / hard jobs can never exceed them.
+const csvRows = (name: string) => {
+  const ls = readFileSync(new URL(`../public/data/${name}`, import.meta.url), "utf8").trim().split(/\r?\n/);
+  const h = ls[0].split(",");
+  return ls.slice(1).map((l) => {
+    const c = l.match(/("[^"]*"|[^,]*)(,|$)/g)!.map((x) => x.replace(/,$/, "").replace(/^"|"$/g, ""));
+    return Object.fromEntries(h.map((k, i) => [k, c[i]]));
+  });
+};
+const famRows = new Map(csvRows("families.csv").map((r) => [`${r.market_id}|${r.family}`, r]));
+for (const p of csvRows("pool.csv")) {
+  const f = famRows.get(`${p.market_id}|${p.family}`);
+  eq(`pool ${p.market_id} ${p.family} jobs/seekers`, `${p.jobs}/${p.seekers}`, f ? `${f.postings}/${f.seekers}` : "(no family row)");
+  if (+p.stranded_seekers > +p.seekers || +p.hard_jobs > +p.jobs) eq(`pool ${p.market_id} ${p.family} bounds`, "over", "within");
+}
+for (const e of csvRows("employers.csv")) if (+e.accepted > +e.applications) eq(`employers ${e.employer} accepted <= applied`, e.accepted, `<= ${e.applications}`);
 console.log(fails ? `${fails} mismatches` : `All ${sections.length} views match`);
 process.exit(fails ? 1 : 0);

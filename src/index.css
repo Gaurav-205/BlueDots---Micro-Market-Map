@@ -203,6 +203,9 @@ b, strong { font-weight: 700; }
 .rolechip .link { margin: 0; font-size: 13px; }
 tbody tr.group td { font-size: 12px; font-weight: 600; color: var(--steel); padding-top: 16px; cursor: default; }
 .skills td:first-child { min-width: 150px; }
+.tsub { font-size: 12px; color: var(--steel); padding-left: 14px; font-weight: 400; }
+tbody tr.static { cursor: default; }
+tbody tr.static td:first-child { font-weight: 600; color: var(--ink-deep); }
 .key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; letter-spacing: 0; color: var(--charcoal); }
 .key span { display: inline-flex; align-items: center; gap: 6px; }
 /* button-ghost: quiet outlined pill. */

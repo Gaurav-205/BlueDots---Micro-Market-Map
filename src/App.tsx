@@ -148,14 +148,14 @@ export default function App() {
               </div></div>
               <div className="pad tabbody">
                 {tab === "skills" && data.families && base && (
-                  <Skills families={data.families} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} />
+                  <Skills families={data.families} pool={data.pool} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} />
                 )}
                 {noDemand && tab !== "gaps" && tab !== "skills" ? empty : tab === "market" && (
                   <>
                     {selected && <button type="button" className="link" onClick={() => setView({ market: "" })}>← All markets</button>}
-                    <Panel market={selected} result={result} view={view} roles={data.roles} flows={data.flows}
+                    <Panel market={selected} result={result} view={view} roles={data.roles} flows={data.flows} employers={data.employers}
                       skills={data.families && base && selected && !selected.isRest
-                        ? <Skills families={data.families} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} marketId={selected.market_id} limit={6} />
+                        ? <Skills families={data.families} view={view} baseRate={base.rate} active={role} onPick={(f) => setView({ role: f })} marketId={selected.market_id} limit={6} pool={data.pool} />
                         : null} />
                   </>
                 )}
